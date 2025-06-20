@@ -16,6 +16,7 @@ Thứ tự Workflow:
 - (đụng đến file Model thì không cần thiết)
 ![image](https://github.com/user-attachments/assets/9de13057-775e-4952-94c8-9531ab3bbdd4)
 ![image](https://github.com/user-attachments/assets/8b459109-d654-4d8a-a504-1c4b1aa240d3)
+
 - (vì thế khi commit, hãy nhớ tick cả file AndroidManifest nữa)
 
 - Khi đã xong xuôi, test chạy tạm ổn, hãy tạm thời commit trước (chưa push) rồi hãy đưa chuột vào tên project rồi chuột phải, xuống phần git và chọn pull, chọn nhánh develop để so sánh giữa 2 nhánh với nhau xem có conflict không, nếu xảy ra conflict thì hãy tự fix trước khi push
