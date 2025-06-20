@@ -1,0 +1,2 @@
+NỘI QUY KHI CODE:
+- KHI COMMMIT/ PUSH, KHÔNG TÍCH CHỌN Ô FILE .env, server.js
