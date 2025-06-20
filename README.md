@@ -6,6 +6,14 @@ NỘI QUY KHI CODE:
 
 
 Thứ tự Workflow:
+- Kết nối SQL Server thông qua Restful api:
+  + Copy đường dẫn này rồi vào file máy tính, đến đường dẫn đó
+  + ![image](https://github.com/user-attachments/assets/365d7be8-5198-4a6f-a5b3-fb43029b409c)
+  + Chuột phải vào khoảng không, chọn Cmd hoặc gõ Cmd vào trên thanh
+  + Gõ "node server.js"
+  + Nếu hiện như ở dưới thì đã kết nối thành công
+  + ![image](https://github.com/user-attachments/assets/fc4ab498-ec7f-441b-a76a-b9ca658cfa36)
+
 - MUỐN TẠO RA 1 FEATURE MỚI
 - Vào phần Remote, đưa chuột vào nhánh develop và chọn "New branch"
 ![image](https://github.com/user-attachments/assets/6c1ad667-f001-41af-b084-485c32acd6ed)
