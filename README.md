@@ -6,6 +6,10 @@ NỘI QUY KHI CODE:
 
 
 Thứ tự Workflow:
+
+![image](https://github.com/user-attachments/assets/73641fbe-06df-4d40-b052-ae6a52a3fd9f)
+- update project trước khi pull
+
 - Kết nối SQL Server thông qua Restful api:
 
   + chuột phải vào file như dưới rồi chạy
