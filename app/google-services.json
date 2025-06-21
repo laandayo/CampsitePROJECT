@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "333169866140",
+    "project_id": "campsiteproject-91bf8",
+    "storage_bucket": "campsiteproject-91bf8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333169866140:android:8bfaba82dd840cdce74459",
+        "android_client_info": {
+          "package_name": "com.lan.campsiteproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "333169866140-jg4gn7jghladkuu0kvnp9ua9pe5vvvgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lan.campsiteproject",
+            "certificate_hash": "cfcd3f6c4664d40e0cafab3bbceb8e6d81ddacce"
+          }
+        },
+        {
+          "client_id": "333169866140-e477uou6ars4pn1evbbt961s4n21v7l2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBT3_MlHVAcyL4iiV4EI23BPXC-R3jB-OY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "333169866140-e477uou6ars4pn1evbbt961s4n21v7l2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

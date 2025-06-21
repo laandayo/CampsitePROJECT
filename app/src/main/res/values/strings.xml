@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CampsitePROJECT</string>
+    <string name="default_web_client_id">333169866140-e477uou6ars4pn1evbbt961s4n21v7l2.apps.googleusercontent.com</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
 </resources>
