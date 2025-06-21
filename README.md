@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/81db0155-32cd-4d08-94ed-39301c60e9e9)NỘI QUY KHI CODE:
+NỘI QUY KHI CODE:
 - KHI COMMMIT/ PUSH, KHÔNG TÍCH CHỌN Ô FILE .env, server.js
 
 
@@ -9,8 +9,11 @@ Thứ tự Workflow:
 - Kết nối SQL Server thông qua Restful api:
 
   + chuột phải vào file như dưới rồi chạy
+  + 
 ![image](https://github.com/user-attachments/assets/fc826c73-3737-4558-a00a-c84264901ca6)
+
   + Nếu hiện như ở dưới thì đã kết nối thành công
+  
 ![image](https://github.com/user-attachments/assets/fc4ab498-ec7f-441b-a76a-b9ca658cfa36)
 
 - MUỐN TẠO RA 1 FEATURE MỚI
