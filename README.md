@@ -9,7 +9,7 @@ Thứ tự Workflow:
 - Kết nối SQL Server thông qua Restful api:
 
   + chuột phải vào file như dưới rồi chạy
-  + 
+  
 ![image](https://github.com/user-attachments/assets/fc826c73-3737-4558-a00a-c84264901ca6)
 
   + Nếu hiện như ở dưới thì đã kết nối thành công
