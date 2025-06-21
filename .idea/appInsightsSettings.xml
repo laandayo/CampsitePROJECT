@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.lan.campsiteproject" />
+                  <option name="mobileSdkAppId" value="1:333169866140:android:8bfaba82dd840cdce74459" />
+                  <option name="projectId" value="campsiteproject-91bf8" />
+                  <option name="projectNumber" value="333169866140" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
