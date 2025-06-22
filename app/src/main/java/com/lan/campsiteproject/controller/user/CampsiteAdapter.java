@@ -1,6 +1,7 @@
 package com.lan.campsiteproject.controller.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,12 +53,30 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
         Glide.with(context)
                 .load(campsite.getCampImage())
                 .placeholder(R.drawable.placeholder)
+                .error(R.drawable.default_camp)
                 .into(holder.imgCampsite);
 
+        // 👉 Mở chi tiết khi click vào item
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CampsiteDetailActivity.class);
+            intent.putExtra("name", campsite.getCampName());
+            intent.putExtra("price", campsite.getCampPrice());
+            intent.putExtra("address", campsite.getCampAddress());
+            intent.putExtra("description", campsite.getCampDescription());
+            intent.putExtra("image", campsite.getCampImage());
+            context.startActivity(intent);
+        });
+
+        // 👉 Khi click nút "Order"
         holder.btnOrder.setOnClickListener(v -> {
             cartManager.addCampsite(campsite);
+
+            Intent intent = new Intent(context, CartActivity.class);
+            context.startActivity(intent);
         });
     }
+
+
 
     @Override
     public int getItemCount() {

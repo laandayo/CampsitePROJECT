@@ -45,6 +45,8 @@
         <activity
             android:name=".controller.user.GearListActivity"
             android:exported="false" />
+        <activity android:name=".controller.order.OrderHistoryActivity" />
+
     </application>
 
 </manifest>
