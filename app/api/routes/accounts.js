@@ -49,7 +49,16 @@ const dbConfig = {
 router.get('/', async (req, res) => {
     try {
         let pool = await sql.connect(dbConfig);
-        let result = await pool.request().query('SELECT * FROM ACCOUNT');
+        const { firebase_uid } = req.query;
+        let query = 'SELECT * FROM ACCOUNT';
+        if (firebase_uid) {
+            query += ' WHERE firebase_uid = @firebase_uid';
+        }
+        let request = pool.request();
+        if (firebase_uid) {
+            request.input('firebase_uid', sql.NVarChar, firebase_uid);
+        }
+        let result = await request.query(query);
         res.json(result.recordset);
     } catch (err) {
         console.error('Database query error:', err);
