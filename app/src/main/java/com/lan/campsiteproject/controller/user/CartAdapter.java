@@ -1,12 +1,16 @@
 package com.lan.campsiteproject.controller.user;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.model.Gear;
 
@@ -14,10 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// import Glide:
-import com.bumptech.glide.Glide;
-
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
+
     private final Context context;
     private final List<Gear> gearList;
     private final CartManager cartManager;
@@ -38,31 +40,53 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Gear gear = gearList.get(position);
-        int quantity = cartManager.getGearMap().get(gear);
+        int quantity = cartManager.getGearMap().getOrDefault(gear, 0);
 
         holder.gearName.setText(gear.getGearName());
         holder.gearPrice.setText("$" + gear.getGearPrice());
         holder.gearQuantity.setText(String.valueOf(quantity));
-        holder.totalPrice.setText("Total: $" + (gear.getGearPrice() * quantity));
+        holder.totalPrice.setText("Tổng: $" + (gear.getGearPrice() * quantity));
 
-        Glide.with(context)
-                .load(gear.getGearImage())
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.default_camp)
-                .into(holder.imgGear);
+        // ✅ Load hình ảnh gear đúng cách
+        String image = gear.getGearImage();
+        if (!TextUtils.isEmpty(image)) {
+            if (image.startsWith("http")) {
+                Glide.with(context)
+                        .load(image)
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.default_gear)
+                        .into(holder.imgGear);
+            } else {
+                if (image.endsWith(".jpg") || image.endsWith(".png")) {
+                    image = image.substring(0, image.lastIndexOf('.'));
+                }
+                int resId = context.getResources().getIdentifier(image.trim(), "drawable", context.getPackageName());
+                if (resId != 0) {
+                    holder.imgGear.setImageResource(resId);
+                } else {
+                    holder.imgGear.setImageResource(R.drawable.default_gear);
+                }
+            }
+        } else {
+            holder.imgGear.setImageResource(R.drawable.default_gear);
+        }
 
+        // Tăng số lượng
         holder.btnIncrease.setOnClickListener(v -> {
             cartManager.updateGearQuantity(gear, quantity + 1);
             notifyItemChanged(position);
         });
 
+        // Giảm số lượng
         holder.btnDecrease.setOnClickListener(v -> {
             int newQty = quantity - 1;
-            cartManager.updateGearQuantity(gear, newQty);
             if (newQty <= 0) {
+                cartManager.removeGear(gear);
                 gearList.remove(position);
                 notifyItemRemoved(position);
+                notifyItemRangeChanged(position, gearList.size());
             } else {
+                cartManager.updateGearQuantity(gear, newQty);
                 notifyItemChanged(position);
             }
         });

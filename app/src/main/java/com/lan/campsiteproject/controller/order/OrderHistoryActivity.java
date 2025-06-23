@@ -14,9 +14,8 @@ import java.util.List;
 
 public class OrderHistoryActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
-    OrderHistoryAdapter adapter;
-    OrderManager orderManager;
+    private RecyclerView recyclerView;
+    private OrderHistoryAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +25,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerOrderHistory);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        orderManager = OrderManager.getInstance();
-        List<Order> orderList = orderManager.getOrderList();
-
+        List<Order> orderList = OrderManager.getInstance().getOrderList();
         if (orderList.isEmpty()) {
             Toast.makeText(this, "Chưa có đơn hàng nào!", Toast.LENGTH_SHORT).show();
         }

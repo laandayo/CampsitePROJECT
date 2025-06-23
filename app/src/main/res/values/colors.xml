@@ -7,4 +7,5 @@
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorOnBackground">#1B5E20</color>
     <color name="purple_500">#AB10ED</color>
+    <color name="white">#CCBDBD</color>
 </resources>

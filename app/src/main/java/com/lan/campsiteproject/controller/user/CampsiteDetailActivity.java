@@ -2,6 +2,8 @@ package com.lan.campsiteproject.controller.user;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,12 +49,38 @@ public class CampsiteDetailActivity extends AppCompatActivity {
             address.setText("Địa chỉ: " + addrStr);
             description.setText("Mô tả: " + descStr);
 
-            // Load ảnh bằng Glide
-            Glide.with(this)
-                    .load(imgUrl)
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.default_camp)
-                    .into(imageView);
+            // Load ảnh thông minh (URL hoặc drawable)
+            if (!TextUtils.isEmpty(imgUrl)) {
+                try {
+                    String imageValue = imgUrl;
+
+                    // Nếu là .jpg/.png thì cắt bỏ đuôi
+                    if (imageValue.endsWith(".jpg") || imageValue.endsWith(".png")) {
+                        imageValue = imageValue.substring(0, imageValue.lastIndexOf('.'));
+                    }
+
+                    if (imageValue.startsWith("http")) {
+                        Glide.with(this)
+                                .load(imageValue)
+                                .placeholder(R.drawable.placeholder)
+                                .error(R.drawable.default_camp)
+                                .into(imageView);
+                    } else {
+                        int resId = getResources().getIdentifier(imageValue.trim(), "drawable", getPackageName());
+
+                        if (resId != 0) {
+                            imageView.setImageResource(resId);
+                        } else {
+                            imageView.setImageResource(R.drawable.default_camp);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("DetailImage", "Lỗi khi load ảnh: " + e.getMessage());
+                    imageView.setImageResource(R.drawable.default_camp);
+                }
+            } else {
+                imageView.setImageResource(R.drawable.default_camp);
+            }
 
             // Xử lý khi nhấn nút Order
             btnOrderDetail.setOnClickListener(v -> {
@@ -70,4 +98,5 @@ public class CampsiteDetailActivity extends AppCompatActivity {
             });
         }
     }
+
 }
