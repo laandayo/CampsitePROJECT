@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp"
+    android:background="#f9f9f9">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Campsite Info -->
+        <LinearLayout
+            android:id="@+id/layoutCampsiteInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="#ffffff"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:id="@+id/imgCartCampsite"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_camp" />
+
+            <TextView
+                android:id="@+id/txtCartCampName"
+                android:text="Tên campsite"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/txtCartCampAddress"
+                android:text="Địa chỉ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/txtCartCampPrice"
+                android:text="Giá: $0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:text="Số người:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/edtNumPeople"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="1"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Add Gear Button -->
+        <Button
+            android:id="@+id/btnAddMoreGear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ADD MORE GEAR"
+            android:background="#4CAF50"
+            android:textColor="#fff"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Gear List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cartRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Total & Checkout -->
+        <TextView
+            android:id="@+id/totalPriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: $0"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/btnCheckout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="THANH TOÁN"
+            android:background="#AA00FF"
+            android:textColor="#ffffff"
+            android:layout_marginTop="8dp" />
+        <Button
+            android:id="@+id/btnViewOrderHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="XEM ĐƠN HÀNG CỦA TÔI"
+            android:background="#2196F3"
+            android:textColor="#fff"
+            android:layout_marginTop="12dp"/>
+
+    </LinearLayout>
+</ScrollView>
