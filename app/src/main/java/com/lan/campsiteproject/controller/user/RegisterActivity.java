@@ -90,6 +90,8 @@ public class RegisterActivity extends AppCompatActivity {
             userData.put("phoneNumber", phone);
             userData.put("isAdmin", false);
             userData.put("isOwner", false);
+            // Add this line after creating userData map
+            userData.put("profileImageUrl", "https://firebasestorage.googleapis.com/v0/b/your-app.appspot.com/o/default_profile.png?alt=media");
 
             // SQL Server data
             JSONObject sqlData = new JSONObject();

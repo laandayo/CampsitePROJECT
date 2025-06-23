@@ -1,4 +1,4 @@
-package com.lan.campsiteproject;
+package com.lan.campsiteproject.controller.user;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.Timestamp;
+import com.lan.campsiteproject.App;
+import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.model.Message;
 
 import java.util.ArrayList;
