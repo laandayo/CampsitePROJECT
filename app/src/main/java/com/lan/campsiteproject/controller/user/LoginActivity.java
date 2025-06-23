@@ -47,16 +47,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
         queue = Volley.newRequestQueue(this);
-        try {
-            db = App.db;
-            if (db == null) {
-                throw new IllegalStateException("Firestore not initialized");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Firestore initialization failed: " + e.getMessage());
-            Toast.makeText(this, "Không thể khởi tạo Firestore: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        mAuth = FirebaseAuth.getInstance();
+        db = App.db;
+        if (db == null) {
+            Log.e(TAG, "Firestore not initialized");
+            finish();
             return;
         }
 
@@ -124,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.d(TAG, "SQL Server response: " + response.toString());
                                     progressBar.setVisibility(View.GONE);
                                     if (response != null && response.length() > 0) {
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                        startActivity(new Intent(LoginActivity.this, ChatListActivity.class));
                                         finish();
                                     } else {
                                         // Account not found in SQL Server, redirect to register

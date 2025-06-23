@@ -39,7 +39,12 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true" />
+        <activity
+            android:name=".controller.user.ChatListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".controller.user.ChatActivity"
+            android:exported="true" />
     </application>
-
 </manifest>

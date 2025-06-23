@@ -1,5 +1,6 @@
 package com.lan.campsiteproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
@@ -62,6 +64,15 @@ public class MainActivity extends AppCompatActivity {
                     Log.e(TAG, "Error fetching accounts: " + error.getMessage());
                     Toast.makeText(MainActivity.this, "Failed to fetch accounts: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+
+        Intent intent = new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ChatActivity.class);
+        intent.putExtra("other_user_id", "some_valid_user_id");
+        startActivity(intent);
+
+        Button goToChatButton = findViewById(R.id.goToChatButton);
+        goToChatButton.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ChatActivity.class));
+        });
 
         queue.add(request);
     }
