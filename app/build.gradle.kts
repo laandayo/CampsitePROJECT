@@ -33,6 +33,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.play.services.auth.v2070)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth.v2231)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
     implementation(platform(libs.firebase.bom))
