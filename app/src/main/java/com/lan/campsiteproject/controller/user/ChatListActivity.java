@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.lan.campsiteproject.ChatActivity;
+import com.lan.campsiteproject.controller.user.ChatActivity;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.adapter.UserAdapter;
 import com.lan.campsiteproject.model.User;
@@ -40,7 +40,9 @@ public class ChatListActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = App.db;
+        Log.d(TAG, "mAuth.getCurrentUser(): " + mAuth.getCurrentUser());
         currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
+        Log.d(TAG, "currentUserId: " + currentUserId);
 
         if (currentUserId == null) {
             Log.e(TAG, "User not logged in");
