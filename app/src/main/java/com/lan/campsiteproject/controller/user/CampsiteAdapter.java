@@ -2,6 +2,8 @@ package com.lan.campsiteproject.controller.user;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,11 +52,38 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
         holder.txtPrice.setText("$" + campsite.getCampPrice());
         holder.txtAddress.setText(campsite.getCampAddress());
 
-        Glide.with(context)
-                .load(campsite.getCampImage())
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.default_camp)
-                .into(holder.imgCampsite);
+        try {
+            String imageValue = campsite.getCampImage();
+
+            if (!TextUtils.isEmpty(imageValue)) {
+                if (imageValue.endsWith(".jpg") || imageValue.endsWith(".png")) {
+                    imageValue = imageValue.substring(0, imageValue.lastIndexOf('.'));
+                }
+
+                if (imageValue.startsWith("http")) {
+                    Glide.with(holder.itemView.getContext())
+                            .load(imageValue)
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.default_camp)
+                            .into(holder.imgCampsite);
+                } else {
+                    int resId = holder.itemView.getContext().getResources()
+                            .getIdentifier(imageValue.trim(), "drawable",
+                                    holder.itemView.getContext().getPackageName());
+
+                    if (resId != 0) {
+                        holder.imgCampsite.setImageResource(resId);
+                    } else {
+                        holder.imgCampsite.setImageResource(R.drawable.default_camp);
+                    }
+                }
+            } else {
+                holder.imgCampsite.setImageResource(R.drawable.default_camp);
+            }
+        } catch (Exception e) {
+            Log.e("AdapterError", "Lỗi khi load ảnh: " + e.getMessage());
+            holder.imgCampsite.setImageResource(R.drawable.default_camp);
+        }
 
         // 👉 Mở chi tiết khi click vào item
         holder.itemView.setOnClickListener(v -> {
@@ -70,11 +99,11 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
         // 👉 Khi click nút "Order"
         holder.btnOrder.setOnClickListener(v -> {
             cartManager.addCampsite(campsite);
-
             Intent intent = new Intent(context, CartActivity.class);
             context.startActivity(intent);
         });
     }
+
 
 
 

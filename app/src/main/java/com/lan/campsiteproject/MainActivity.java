@@ -1,5 +1,13 @@
 package com.lan.campsiteproject;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -13,18 +21,25 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.lan.campsiteproject.controller.user.CartActivity;
+import com.lan.campsiteproject.controller.user.CartManager;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private RequestQueue queue;
     private static final String BASE_URL = "http://10.0.2.2:3000"; // Emulator
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         queue = Volley.newRequestQueue(this);
 
-        // Test database connection
-        getAccounts();
+        getAccounts(); // test kết nối
+
+        // Bước 1: Kiểm tra đơn chưa thanh toán
+        checkUnpaidOrderReminder();
+
+        // Bước 2: Yêu cầu quyền thông báo nếu Android 13+
+        requestNotificationPermission();
     }
 
-    // New method: Fetch all accounts
     private void getAccounts() {
         String url = BASE_URL + "/accounts";
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -75,5 +94,52 @@ public class MainActivity extends AppCompatActivity {
         });
 
         queue.add(request);
+    }
+
+    private void checkUnpaidOrderReminder() {
+        CartManager cartManager = CartManager.getInstance();
+        if (cartManager.getSelectedCampsite() != null) {
+            showUnpaidNotification();
+        }
+    }
+
+    private void showUnpaidNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "order_channel";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "Order Notification",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Intent intent = new Intent(this, CartActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.ic_cart) // cần có icon cart (có thể dùng vector)
+                .setContentTitle("Bạn có đơn hàng chưa thanh toán")
+                .setContentText("Nhấn để hoàn tất thanh toán trong giỏ hàng")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        notificationManager.notify(1001, builder.build());
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
     }
 }
