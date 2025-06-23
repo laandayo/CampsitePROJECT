@@ -39,6 +39,14 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controller.user.CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controller.user.GearListActivity"
+            android:exported="false" />
+        <activity android:name=".controller.order.OrderHistoryActivity" />
             android:exported="true" />
         <activity
             android:name=".controller.user.ChatListActivity"
@@ -47,4 +55,5 @@
             android:name=".controller.user.ChatActivity"
             android:exported="true" />
     </application>
+
 </manifest>
