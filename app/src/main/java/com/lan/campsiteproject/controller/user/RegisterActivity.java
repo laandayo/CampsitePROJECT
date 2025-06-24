@@ -131,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                 JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, BASE_URL + "/accounts", sqlData,
                                                         response -> {
                                                             Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
-                                                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                                            startActivity(new Intent(RegisterActivity.this, ListCampsiteActivity.class));
                                                             finish();
                                                         },
                                                         error -> {

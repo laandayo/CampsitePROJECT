@@ -3,10 +3,13 @@ package com.lan.campsiteproject.controller.user;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,9 +43,30 @@ public class ListCampsiteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listcampsite);
 
-        Button goToMapButton = findViewById(R.id.goToMapButton);
-        goToMapButton.setOnClickListener(v -> {
-            startActivity(new Intent(ListCampsiteActivity.this, com.lan.campsiteproject.map.MapActivity.class));
+        Button multiActionButton = findViewById(R.id.multiActionButton);
+        multiActionButton.setOnLongClickListener(v -> {
+            View popupView = LayoutInflater.from(this).inflate(R.layout.popup_multi_action, null);
+            PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+            // Set up each button
+            popupView.findViewById(R.id.btnChat).setOnClickListener(btn -> {
+                startActivity(new Intent(this, ChatListActivity.class));
+                popupWindow.dismiss();
+            });
+            popupView.findViewById(R.id.btnMap).setOnClickListener(btn -> {
+                startActivity(new Intent(this, com.lan.campsiteproject.map.MapActivity.class));
+                popupWindow.dismiss();
+            });
+            popupView.findViewById(R.id.btnCart).setOnClickListener(btn -> {
+                startActivity(new Intent(this, CartActivity.class));
+                popupWindow.dismiss();
+            });
+            popupView.findViewById(R.id.btnOrder).setOnClickListener(btn -> {
+                startActivity(new Intent(this, com.lan.campsiteproject.controller.order.OrderHistoryActivity.class));
+                popupWindow.dismiss();
+            });
+            popupWindow.showAsDropDown(multiActionButton, -100, -200);
+            return true;
         });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -55,11 +79,6 @@ public class ListCampsiteActivity extends AppCompatActivity {
 
         loadCampsites();
 
-        FloatingActionButton goToChatButton = findViewById(R.id.goToChatButton);
-        goToChatButton.setOnClickListener(v -> {
-            startActivity(new Intent(ListCampsiteActivity.this, com.lan.campsiteproject.controller.user.ChatListActivity.class));
-
-        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
