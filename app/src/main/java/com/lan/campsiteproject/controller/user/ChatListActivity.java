@@ -88,6 +88,7 @@ public class ChatListActivity extends AppCompatActivity {
                     searchResultUsers.clear();
                     for (var doc : querySnapshot) {
                         User user = doc.toObject(User.class);
+                        Log.d("ChatListActivity", "Found user: " + user.getEmail() + ", firebaseUid: " + user.getFirebaseUid());
                         if (!user.getFirebaseUid().equals(currentUserId)) {
                             searchResultUsers.add(user);
                         }

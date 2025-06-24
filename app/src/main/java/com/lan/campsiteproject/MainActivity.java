@@ -84,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Failed to fetch accounts: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 });
 
-        Intent intent = new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ChatActivity.class);
-        intent.putExtra("other_user_id", "some_valid_user_id");
-        startActivity(intent);
+//        Intent intent = new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ChatActivity.class);
+//        intent.putExtra("other_user_id", "some_valid_user_id");
+//        startActivity(intent);
 
-        Button goToChatButton = findViewById(R.id.goToChatButton);
+        com.google.android.material.floatingactionbutton.FloatingActionButton goToChatButton = findViewById(R.id.goToChatButton);
         goToChatButton.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ChatActivity.class));
+            startActivity(new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ListCampsiteActivity.class));
         });
 
         queue.add(request);

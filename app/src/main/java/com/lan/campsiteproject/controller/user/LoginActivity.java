@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.d(TAG, "SQL Server response: " + response.toString());
                                     progressBar.setVisibility(View.GONE);
                                     if (response != null && response.length() > 0) {
-                                        startActivity(new Intent(LoginActivity.this, ChatListActivity.class));
+                                        startActivity(new Intent(LoginActivity.this, ListCampsiteActivity.class));
                                         finish();
                                     } else {
                                         // Account not found in SQL Server, redirect to register

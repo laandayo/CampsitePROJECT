@@ -5,13 +5,12 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/chat_display"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
-        android:background="#F5F5F5" />
+        android:background="#F5F5F5"/>
 
     <LinearLayout
         android:layout_width="match_parent"

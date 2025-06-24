@@ -24,4 +24,22 @@
         android:layout_weight="1"
         android:padding="8dp"
         android:scrollbars="vertical" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/goToChatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Go to Chat"
+        android:src="@drawable/ic_chat"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="24dp"
+        app:backgroundTint="@color/teal_700" />
+
+    <!-- Add this inside your LinearLayout, after the RecyclerView -->
+    <Button
+        android:id="@+id/goToMapButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Map"
+        android:layout_margin="16dp"/>
 </LinearLayout>

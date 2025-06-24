@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -13,6 +14,7 @@ import com.google.firebase.Timestamp;
 import com.lan.campsiteproject.App;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.model.Message;
+import com.lan.campsiteproject.adapter.MessageAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +27,11 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String currentUserId;
     private String otherUserId;
-    private TextView chatDisplay;
     private EditText messageInput;
     private Button sendButton;
+    private RecyclerView chatRecycler;
     private List<Message> messages = new ArrayList<>();
+    private MessageAdapter messageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +49,13 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
-        chatDisplay = findViewById(R.id.chat_display);
+        chatRecycler = findViewById(R.id.chat_recycler);
         messageInput = findViewById(R.id.message_input);
         sendButton = findViewById(R.id.send_button);
+
+        messageAdapter = new MessageAdapter(messages, currentUserId);
+        chatRecycler.setLayoutManager(new LinearLayoutManager(this));
+        chatRecycler.setAdapter(messageAdapter);
 
         sendButton.setOnClickListener(v -> sendMessage());
         loadMessages();
@@ -64,8 +71,7 @@ public class ChatActivity extends AppCompatActivity {
         db.collection("chats").document(chatId).collection("messages").add(message)
                 .addOnSuccessListener(doc -> {
                     message.setMessageId(doc.getId());
-                    messages.add(message);
-                    updateChatDisplay();
+                    // No need to add to messages here, will be added by listener
                     messageInput.setText("");
                     updateChatMetadata(chatId, content);
                 })
@@ -89,18 +95,10 @@ public class ChatActivity extends AppCompatActivity {
                                 messages.add(message);
                             }
                         }
-                        updateChatDisplay();
+                        messageAdapter.notifyDataSetChanged();
+                        chatRecycler.scrollToPosition(messages.size() - 1);
                     }
                 });
-    }
-
-    private void updateChatDisplay() {
-        StringBuilder display = new StringBuilder();
-        for (Message msg : messages) {
-            String sender = msg.getSenderId().equals(currentUserId) ? "You" : "Other";
-            display.append(sender).append(": ").append(msg.getContent()).append("\n");
-        }
-        chatDisplay.setText(display.toString());
     }
 
     private String getChatId(String userId1, String userId2) {
