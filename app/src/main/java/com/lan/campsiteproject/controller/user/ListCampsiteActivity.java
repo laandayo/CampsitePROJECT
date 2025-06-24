@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ListCampsiteActivity extends AppCompatActivity {
 
@@ -37,6 +39,12 @@ public class ListCampsiteActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listcampsite);
+
+        Button goToMapButton = findViewById(R.id.goToMapButton);
+        goToMapButton.setOnClickListener(v -> {
+            startActivity(new Intent(ListCampsiteActivity.this, com.lan.campsiteproject.map.MapActivity.class));
+        });
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,6 +54,12 @@ public class ListCampsiteActivity extends AppCompatActivity {
         cartManager = CartManager.getInstance();
 
         loadCampsites();
+
+        FloatingActionButton goToChatButton = findViewById(R.id.goToChatButton);
+        goToChatButton.setOnClickListener(v -> {
+            startActivity(new Intent(ListCampsiteActivity.this, com.lan.campsiteproject.controller.user.ChatListActivity.class));
+
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
