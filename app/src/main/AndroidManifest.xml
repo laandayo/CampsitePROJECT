@@ -39,6 +39,14 @@
         <activity
             android:name=".controller.user.CampsiteDetailActivity"
             android:exported="false" />
+
+<!--        map-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBE8J3XrpWDUEkEL8CMLAGC5KjOHB86tpE" />
+        <activity android:name=".map.MapActivity" android:exported="true"  />
+        <activity android:name=".map.ButtonActivity"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
