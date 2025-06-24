@@ -1,113 +1,103 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- app/src/main/res/layout/activity_register.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F7F7">
+    android:orientation="vertical"
+    android:padding="24dp">
 
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Email -->
+    <EditText
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="32dp"
+        android:enabled="false"
+        android:textColor="#000000" />
 
-        <ImageView
-            android:id="@+id/logoImage"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="32dp" />
-        <!--android:src="@drawable/ic_logo"-->
+    <!-- Large space -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="32dp" />
 
-        <!-- Gmail Field -->
-        <EditText
-            android:id="@+id/gmailField"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="Gmail"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/rounded_edittext"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"
-            android:enabled="false" />
+    <!-- First Name -->
+    <EditText
+        android:id="@+id/first_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        android:layout_marginTop="0dp"
+        android:textColor="#000000" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp" />
+    <!-- Last Name -->
+    <EditText
+        android:id="@+id/last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        android:layout_marginTop="20dp"
+        android:textColor="#000000" />
 
-        <!-- Name and Phone Fields -->
-        <EditText
-            android:id="@+id/firstNameField"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="First Name"
-            android:background="@drawable/rounded_edittext"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
+    <!-- Phone Number -->
+    <EditText
+        android:id="@+id/phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:layout_marginTop="20dp"
+        android:textColor="#000000" />
 
-        <EditText
-            android:id="@+id/lastNameField"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="Last Name"
-            android:background="@drawable/rounded_edittext"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
+    <!-- Large space -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="32dp" />
 
-        <EditText
-            android:id="@+id/phoneField"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="Phone Number"
-            android:inputType="phone"
-            android:background="@drawable/rounded_edittext"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
+    <!-- Password -->
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_marginTop="0dp"
+        android:textColor="#000000" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="24dp" />
+    <!-- Password Again -->
+    <EditText
+        android:id="@+id/password_again"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password Again"
+        android:inputType="textPassword"
+        android:layout_marginTop="20dp"
+        android:textColor="#000000" />
 
-        <!-- Password Fields -->
-        <EditText
-            android:id="@+id/passwordField"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:background="@drawable/rounded_edittext"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
+    <!-- Extra big space before register button -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
 
-        <EditText
-            android:id="@+id/passwordAgainField"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="Password Again"
-            android:inputType="textPassword"
-            android:background="@drawable/rounded_edittext"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
+    <!-- Register Button -->
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="16dp"
+        android:text="Register" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-        <!-- Register Button -->
-        <Button
-            android:id="@+id/completeRegisterButton"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="Complete Registration"
-            android:textSize="20sp"
-            android:backgroundTint="#1976D2"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/rounded_edittext"/>
-    </LinearLayout>
-</ScrollView>
+    <Button
+        android:id="@+id/backToLoginButton"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginTop="16dp"
+        android:text="Back to Login" />
+</LinearLayout>

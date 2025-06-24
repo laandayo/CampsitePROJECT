@@ -4,59 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    card_view:cardCornerRadius="12dp"
-    card_view:cardElevation="6dp"
-    android:background="@android:color/white">
+    card_view:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp">
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <!-- Hình ảnh -->
         <ImageView
-            android:id="@+id/imgCamp"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_launcher_background" />
+            android:id="@+id/imgCampImage"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop" />
 
-        <!-- Thông tin -->
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/txtCampName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:text="Camp Name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
 
-            <TextView
-                android:id="@+id/txtCampName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tên khu cắm trại"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2C3E50" />
+        <TextView
+            android:id="@+id/txtCampPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$100"
+            android:textSize="16sp"
+            android:layout_marginTop="4dp" />
 
-            <TextView
-                android:id="@+id/txtCampPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Giá: 1000000"
-                android:textSize="16sp"
-                android:textColor="#555555"
-                android:layout_marginTop="4dp" />
+        <TextView
+            android:id="@+id/txtCampAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="123 Street, City"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
 
-            <TextView
-                android:id="@+id/txtCampAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Địa chỉ: 123 đường ABC"
-                android:textSize="16sp"
-                android:textColor="#777777"
-                android:layout_marginTop="2dp" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btnOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
