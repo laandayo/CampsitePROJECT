@@ -2,27 +2,27 @@ package com.lan.campsiteproject.model;
 
 
 public class Campsite {
-    private int campId;
+    private String campId;
     private int campPrice;
-    private int campOwner;
+    private String campOwner;
     private String campAddress;
     private String campName;
     private String campDescription;
     private String campImage;
     private boolean campStatus;
-    private int limite;
+    private int quantity;
     private String campsiteOwnerName;
     
     public Campsite (){
         
     }
 
-    public Campsite(int campId, int limite) {
+    public Campsite(String campId, int quantity) {
         this.campId = campId;
-        this.limite = limite;
+        this.quantity = quantity;
     }
 
-    public Campsite(int campId, int campPrice, int campOwner, String campAddress, String campName, String campDecription,String campImage, boolean campStatus, String campsiteOwnerName) {
+    public Campsite(String campId, int campPrice, String campOwner, String campAddress, String campName, String campDecription,String campImage, boolean campStatus, String campsiteOwnerName) {
         this.campId = campId;
         this.campPrice = campPrice;
         this.campOwner = campOwner;
@@ -34,11 +34,11 @@ public class Campsite {
         this.campsiteOwnerName = campsiteOwnerName;
     }
 
-    public int getCampId() {
+    public String getCampId() {
         return campId;
     }
 
-    public void setCampId(int campId) {
+    public void setCampId(String campId) {
         this.campId = campId;
     }
 
@@ -50,9 +50,9 @@ public class Campsite {
         this.campPrice = campPrice;
     }
 
-    public int getCampOwner() { return campOwner; }
+    public String getCampOwner() { return campOwner; }
 
-    public void setCampOwner(int campOwner) { this.campOwner = campOwner; }
+    public void setCampOwner(String campOwner) { this.campOwner = campOwner; }
 
     public String getCampAddress() {
         return campAddress;
@@ -94,12 +94,12 @@ public class Campsite {
         this.campStatus = campStatus;
     }
 
-    public int getLimite() {
-        return limite;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setLimite(int limite) {
-        this.limite = limite;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getCampsiteOwnerName() {

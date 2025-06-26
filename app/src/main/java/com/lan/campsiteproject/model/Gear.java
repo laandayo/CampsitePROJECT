@@ -2,31 +2,31 @@ package com.lan.campsiteproject.model;
 
 
 public class Gear {
-    private int gearId;
+    private String gearId;
     private int gearPrice;
-    private int gearOwner;
+    private String gearOwner;
     private String gearName;
-    private String gearDecription;
+    private String gearDescription;
     private String gearImage;
     
     public Gear(){
         
     }
 
-    public Gear(int gearId, int gearPrice, int gearOwner, String gearName, String gearDecription, String gearImage) {
+    public Gear(String gearId, int gearPrice, String gearOwner, String gearName, String gearDescription, String gearImage) {
         this.gearId = gearId;
         this.gearPrice = gearPrice;
         this.gearOwner = gearOwner;
         this.gearName = gearName;
-        this.gearDecription = gearDecription;
+        this.gearDescription = gearDescription;
         this.gearImage = gearImage;
     }
 
-    public int getGearId() {
+    public String getGearId() {
         return gearId;
     }
 
-    public void setGearId(int gearId) {
+    public void setGearId(String gearId) {
         this.gearId = gearId;
     }
 
@@ -38,11 +38,11 @@ public class Gear {
         this.gearPrice = gearPrice;
     }
 
-    public int getGearOwner() {
+    public String getGearOwner() {
         return gearOwner;
     }
 
-    public void setGearOwner(int gearOwner) {
+    public void setGearOwner(String gearOwner) {
         this.gearOwner = gearOwner;
     }
 
@@ -54,12 +54,12 @@ public class Gear {
         this.gearName = gearName;
     }
 
-    public String getGearDecription() {
-        return gearDecription;
+    public String getGearDescription() {
+        return gearDescription;
     }
 
-    public void setGearDecription(String gearDecription) {
-        this.gearDecription = gearDecription;
+    public void setGearDescription(String gearDescription) {
+        this.gearDescription = gearDescription;
     }
 
     public String getGearImage() {

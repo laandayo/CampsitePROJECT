@@ -8,21 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
@@ -30,10 +22,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.lan.campsiteproject.controller.user.CartActivity;
-import com.lan.campsiteproject.controller.user.CartManager;
+import com.lan.campsiteproject.controller.campsite.CartActivity;
+import com.lan.campsiteproject.controller.campsite.CartManager;
+import com.lan.campsiteproject.controller.campsite.ListCampsiteActivity;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -90,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         com.google.android.material.floatingactionbutton.FloatingActionButton goToChatButton = findViewById(R.id.goToChatButton);
         goToChatButton.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, com.lan.campsiteproject.controller.user.ListCampsiteActivity.class));
+            startActivity(new Intent(MainActivity.this, ListCampsiteActivity.class));
         });
 
         queue.add(request);
