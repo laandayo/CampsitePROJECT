@@ -10,10 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,20 +22,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lan.campsiteproject.App;
-import com.lan.campsiteproject.MainActivity;
 import com.lan.campsiteproject.R;
-import com.android.volley.toolbox.JsonArrayRequest;
-import java.util.HashMap;
-import java.util.Map;
+import com.lan.campsiteproject.controller.campsite.ListCampsiteActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 9001;
-    private static final String BASE_URL = "http://10.0.2.2:3000"; // Emulator
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseFirestore db;
-    private RequestQueue queue;
     private ProgressBar progressBar;
 
     @Override
@@ -47,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        queue = Volley.newRequestQueue(this);
         mAuth = FirebaseAuth.getInstance();
         db = App.db;
         if (db == null) {
@@ -80,11 +70,6 @@ public class LoginActivity extends AppCompatActivity {
             }
             loginUser(email, password);
         });
-
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if (currentUser != null) {
-//            checkUserInFirestore(currentUser);
-//        }
     }
 
     private void loginUser(String email, String password) {
@@ -112,45 +97,12 @@ public class LoginActivity extends AppCompatActivity {
         db.collection("users").document(user.getUid())
                 .get()
                 .addOnSuccessListener(document -> {
+                    progressBar.setVisibility(View.GONE);
                     if (document.exists()) {
-                        // Proceed to check SQL Server account
-                        Log.d(TAG, "Requesting: " + BASE_URL + "/accounts?firebase_uid=" + user.getUid());
-                        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL + "/accounts?firebase_uid=" + user.getUid(), null,
-                                response -> {
-                                    Log.d(TAG, "SQL Server response: " + response.toString());
-                                    progressBar.setVisibility(View.GONE);
-                                    if (response != null && response.length() > 0) {
-                                        startActivity(new Intent(LoginActivity.this, ListCampsiteActivity.class));
-                                        finish();
-                                    } else {
-                                        // Account not found in SQL Server, redirect to register
-                                        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                                        intent.putExtra("firebase_uid", user.getUid());
-                                        intent.putExtra("gmail", user.getEmail());
-                                        intent.putExtra("first_name", user.getDisplayName() != null ? user.getDisplayName().split(" ")[0] : "");
-                                        intent.putExtra("last_name", user.getDisplayName() != null && user.getDisplayName().split(" ").length > 1 ? user.getDisplayName().split(" ")[1] : "");
-                                        intent.putExtra("phone_number", user.getPhoneNumber() != null ? user.getPhoneNumber() : "");
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                },
-                                error -> {
-                                    Log.e(TAG, "Volley error: " + error.toString());
-                                    progressBar.setVisibility(View.GONE);
-                                    // On error, redirect to register
-                                    Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                                    intent.putExtra("firebase_uid", user.getUid());
-                                    intent.putExtra("gmail", user.getEmail());
-                                    intent.putExtra("first_name", user.getDisplayName() != null ? user.getDisplayName().split(" ")[0] : "");
-                                    intent.putExtra("last_name", user.getDisplayName() != null && user.getDisplayName().split(" ").length > 1 ? user.getDisplayName().split(" ")[1] : "");
-                                    intent.putExtra("phone_number", user.getPhoneNumber() != null ? user.getPhoneNumber() : "");
-                                    startActivity(intent);
-                                    finish();
-                                });
-                        queue.add(request);
+                        startActivity(new Intent(LoginActivity.this, ListCampsiteActivity.class));
+                        finish();
                     } else {
                         // Firestore user not found, redirect to register
-                        progressBar.setVisibility(View.GONE);
                         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                         intent.putExtra("firebase_uid", user.getUid());
                         intent.putExtra("gmail", user.getEmail());
@@ -166,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(this, "Cannot connect to server: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
+
     private void signInWithGoogle() {
         progressBar.setVisibility(View.VISIBLE);
         mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {
