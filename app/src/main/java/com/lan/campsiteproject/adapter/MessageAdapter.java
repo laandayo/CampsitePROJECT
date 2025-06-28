@@ -12,11 +12,13 @@ import com.lan.campsiteproject.model.Message;
 
 import java.util.List;
 
+
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
     private List<Message> messages;
     private String currentUserId;
+    private static final long TIME_GAP_THRESHOLD_MS = 10 * 60 * 1000;
 
     public MessageAdapter(List<Message> messages, String currentUserId) {
         this.messages = messages;
@@ -42,10 +44,54 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
-        if (holder instanceof SentViewHolder) {
-            ((SentViewHolder) holder).messageText.setText(message.getContent());
+        boolean showTimestamp = false;
+        long gap = 0;
+        if (position == 0) {
+            showTimestamp = true;
         } else {
-            ((ReceivedViewHolder) holder).messageText.setText(message.getContent());
+            Message prev = messages.get(position - 1);
+            gap = message.getTimestamp().toDate().getTime() - prev.getTimestamp().toDate().getTime();
+            if (gap > TIME_GAP_THRESHOLD_MS) {
+                showTimestamp = true;
+            }
+        }
+
+        String content = message.getContent() != null ? message.getContent() : "";
+        String timeText;
+        if (gap > 365L * 24 * 60 * 60 * 1000) {
+            timeText = new java.text.SimpleDateFormat("HH:mm, dd MMM yyyy", java.util.Locale.getDefault())
+                    .format(message.getTimestamp().toDate());
+        } else {
+            timeText = new java.text.SimpleDateFormat("HH:mm, dd MMM", java.util.Locale.getDefault())
+                    .format(message.getTimestamp().toDate());
+        }
+
+        if (holder instanceof SentViewHolder) {
+            ((SentViewHolder) holder).messageText.setText(content);
+            TextView timestampView = holder.itemView.findViewById(R.id.timestamp);
+            if (showTimestamp) {
+                timestampView.setVisibility(View.VISIBLE);
+                timestampView.setText(timeText);
+            } else {
+                timestampView.setVisibility(View.GONE);
+            }
+
+            TextView statusView = holder.itemView.findViewById(R.id.message_status);
+            if (message.getStatus() != null && !message.getStatus().isEmpty()) {
+                statusView.setVisibility(View.VISIBLE);
+                statusView.setText(message.getStatus());
+            } else {
+                statusView.setVisibility(View.GONE);
+            }
+        } else if (holder instanceof ReceivedViewHolder) {
+            ((ReceivedViewHolder) holder).messageText.setText(content);
+            TextView timestampView = holder.itemView.findViewById(R.id.timestamp);
+            if (showTimestamp) {
+                timestampView.setVisibility(View.VISIBLE);
+                timestampView.setText(timeText);
+            } else {
+                timestampView.setVisibility(View.GONE);
+            }
         }
     }
 

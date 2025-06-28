@@ -273,5 +273,4 @@ public class RegisterActivity extends AppCompatActivity {
         String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         return password.matches(pattern);
     }
-
 }
