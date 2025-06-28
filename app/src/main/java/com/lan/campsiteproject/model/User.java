@@ -12,10 +12,11 @@ public class User {
     private String code;
     private int accountId;
     private String firebaseUid;
+    private String gender;
 
     public User() {}
 
-    public User(int id, String firstName, String lastName, String email, String phoneNumber, String passwordHash, boolean isAdmin, boolean isOwner) {
+    public User(int id, String firstName, String lastName, String email, String phoneNumber, String passwordHash, boolean isAdmin, boolean isOwner, String gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,9 +25,18 @@ public class User {
         this.passwordHash = passwordHash;
         this.isAdmin = isAdmin;
         this.isOwner = isOwner;
+        this.gender = gender;
     }
 
     // Getters and setters (unchanged)
+    public String isGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getFirstName() { return firstName; }
