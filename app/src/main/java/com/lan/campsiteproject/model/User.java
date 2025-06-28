@@ -13,6 +13,7 @@ public class User {
     private int accountId;
     private String firebaseUid;
     private String gender;
+    private String profileImageUrl;
 
     public User() {}
 
@@ -29,12 +30,21 @@ public class User {
     }
 
     // Getters and setters (unchanged)
-    public String isGender() {
+
+
+    public String getGender() {
         return gender;
     }
-
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public int getId() { return id; }

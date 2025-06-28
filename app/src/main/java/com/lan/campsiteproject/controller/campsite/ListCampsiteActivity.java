@@ -22,6 +22,8 @@ import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.adapter.CampsiteAdapter;
 import com.lan.campsiteproject.controller.user.ChatListActivity;
 import com.lan.campsiteproject.model.Campsite;
+import com.lan.campsiteproject.controller.user.LoginActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,12 @@ public class ListCampsiteActivity extends AppCompatActivity {
             });
             popupView.findViewById(R.id.btnOrder).setOnClickListener(btn -> {
                 startActivity(new Intent(this, com.lan.campsiteproject.controller.orders.OrderHistoryActivity.class));
+                popupWindow.dismiss();
+            });
+            popupView.findViewById(R.id.btnLogout).setOnClickListener(btn -> {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
                 popupWindow.dismiss();
             });
             popupWindow.showAsDropDown(multiActionButton, -100, -200);
