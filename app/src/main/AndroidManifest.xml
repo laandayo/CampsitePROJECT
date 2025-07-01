@@ -65,6 +65,9 @@
         <activity
             android:name=".controller.user.ChatActivity"
             android:exported="true" />
+        <activity
+            android:name=".controller.user.ProfileActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
