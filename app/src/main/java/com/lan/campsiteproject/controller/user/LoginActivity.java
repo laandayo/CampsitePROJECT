@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private ProgressBar progressBar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +44,21 @@ public class LoginActivity extends AppCompatActivity {
         if (db == null) {
             Log.e(TAG, "Firestore not initialized");
             finish();
+            return;
+        }
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            db.collection("users").document(user.getUid())
+                    .get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            startActivity(new Intent(LoginActivity.this, ListCampsiteActivity.class));
+                            finish();
+                        } else {
+                            user.delete();
+                        }
+                    });
             return;
         }
 

@@ -57,7 +57,8 @@
         <activity
             android:name=".controller.campsite.GearListActivity"
             android:exported="false" />
-        <activity android:name=".controller.orders.OrderHistoryActivity" />
+        <activity
+            android:name=".controller.orders.OrderHistoryActivity"
             android:exported="true" />
         <activity
             android:name=".controller.user.ChatListActivity"
