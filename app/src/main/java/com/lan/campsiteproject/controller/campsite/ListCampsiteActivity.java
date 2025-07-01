@@ -66,6 +66,9 @@ public class ListCampsiteActivity extends AppCompatActivity {
                 startActivity(new Intent(this, com.lan.campsiteproject.controller.orders.OrderHistoryActivity.class));
                 popupWindow.dismiss();
             });
+            popupView.findViewById(R.id.btnProfile).setOnClickListener(btn -> {
+                startActivity(new Intent(this, com.lan.campsiteproject.controller.user.ProfileActivity.class));
+            });
             popupView.findViewById(R.id.btnLogout).setOnClickListener(btn -> {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, LoginActivity.class));
