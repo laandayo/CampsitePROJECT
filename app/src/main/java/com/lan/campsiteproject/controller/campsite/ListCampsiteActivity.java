@@ -72,6 +72,10 @@ public class ListCampsiteActivity extends AppCompatActivity {
                 finish();
                 popupWindow.dismiss();
             });
+            popupView.findViewById(R.id.btnSettings).setOnClickListener(btn -> {
+                startActivity(new Intent(this, SettingsActivity.class));
+                popupWindow.dismiss();
+            });
             popupWindow.showAsDropDown(multiActionButton, -100, -200);
             return true;
         });

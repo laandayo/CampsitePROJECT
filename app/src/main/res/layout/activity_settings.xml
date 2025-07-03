@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ListView
+        android:id="@+id/settings_menu"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:background="#222"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"/>
+
+    <FrameLayout
+        android:id="@+id/settings_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+</LinearLayout>
