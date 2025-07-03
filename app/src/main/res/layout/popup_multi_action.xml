@@ -39,17 +39,17 @@
         android:layout_height="56dp"
         android:background="@drawable/round_button_bg"
         android:text="📦"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/white"/>
     <Button
-        android:id="@+id/btnProfile"
+        android:id="@+id/btnSettings"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:background="@drawable/round_button_bg"
-        android:text=""
+        android:text="⚙️"
         android:textColor="@android:color/white"
-        android:layout_marginStart="12dp"/>
         android:layout_marginStart="12dp"
         android:textSize="24sp"/>
+
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
