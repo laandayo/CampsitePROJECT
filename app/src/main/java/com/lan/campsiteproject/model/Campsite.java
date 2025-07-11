@@ -12,7 +12,10 @@ public class Campsite {
     private boolean campStatus;
     private int quantity;
     private String campsiteOwnerName;
-    
+    private int limite; // nếu chưa có
+
+
+
     public Campsite (){
         
     }
@@ -108,5 +111,8 @@ public class Campsite {
 
     public void setCampsiteOwnerName(String campsiteOwnerName) {
         this.campsiteOwnerName = campsiteOwnerName;
+    }
+    public int getLimite() {
+        return limite;
     }
 }

@@ -1,0 +1,24 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Thêm các thuộc tính bổ sung nếu cần -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- Đảm bảo các widget sử dụng Material Components -->
+        <item name="buttonStyle">@style/Widget.AppCompat.Button</item>
+        <item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
+    </style>
+
+    <!-- Có thể thêm các style khác nếu cần -->
+    <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="android:elevation">4dp</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">@android:color/white</item>
+    </style>
+</resources>

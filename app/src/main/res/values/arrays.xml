@@ -1,0 +1,23 @@
+<resources>
+    <string-array name="area_filter">
+        <item>Tất cả</item>
+        <item>Hà Nội</item>
+        <item>Hồ Chí Minh</item>
+        <item>Đà Nẵng</item>
+        <item>Đà Lạt</item>
+        <item>Nha Trang</item>
+    </string-array>
+
+    <string-array name="price_filter">
+        <item>Tất cả</item>
+        <item>Dưới 500</item>
+        <item>500 - 1000</item>
+        <item>Trên 1000</item>
+    </string-array>
+
+    <string-array name="status_filter">
+        <item>Tất cả</item>
+        <item>Đang hoạt động</item>
+        <item>Tạm nghỉ</item>
+    </string-array>
+</resources>

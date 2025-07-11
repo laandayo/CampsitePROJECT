@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">CampsitePROJECT</string>
+    <string name="app_name">Campsite dành cho Đóm</string>
     <string name="default_web_client_id">333169866140-e477uou6ars4pn1evbbt961s4n21v7l2.apps.googleusercontent.com</string>
     <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="filter_address">Khu vực</string>
+    <string name="filter_price">Giá</string>
+    <string name="filter_status">Trạng thái</string>
 </resources>

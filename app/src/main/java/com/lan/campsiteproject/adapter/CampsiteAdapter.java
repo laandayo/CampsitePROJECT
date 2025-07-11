@@ -21,21 +21,39 @@ import com.lan.campsiteproject.controller.campsite.CartActivity;
 import com.lan.campsiteproject.controller.campsite.CartManager;
 import com.lan.campsiteproject.model.Campsite;
 
+import java.util.ArrayList;
 import java.util.List;
-
 public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHolder> {
     private Context context;
-    private List<Campsite> campsiteList;
+    private List<Campsite> originalList;  // 🔍 Danh sách gốc
+    private List<Campsite> filteredList;  // 🔍 Danh sách hiển thị
     private CartManager cartManager;
 
     public CampsiteAdapter(Context context, List<Campsite> campsiteList, CartManager cartManager) {
         this.context = context;
-        this.campsiteList = campsiteList;
+        this.originalList = new ArrayList<>(campsiteList);  // 🔍 Sao chép danh sách gốc
+        this.filteredList = campsiteList;
         this.cartManager = cartManager;
     }
+
     public void updateCampsites(List<Campsite> campsites) {
-        this.campsiteList.clear();
-        this.campsiteList.addAll(campsites);
+        this.originalList.clear();
+        this.originalList.addAll(campsites);
+        this.filteredList = new ArrayList<>(campsites);
+        notifyDataSetChanged();
+    }
+
+    public void filter(String keyword) { // 🔍 Hàm filter theo tên
+        filteredList.clear();
+        if (TextUtils.isEmpty(keyword)) {
+            filteredList.addAll(originalList);
+        } else {
+            for (Campsite c : originalList) {
+                if (c.getCampName().toLowerCase().contains(keyword.toLowerCase())) {
+                    filteredList.add(c);
+                }
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -48,7 +66,7 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Campsite campsite = campsiteList.get(position);
+        Campsite campsite = filteredList.get(position); // 🔍 dùng filteredList
 
         holder.txtName.setText(campsite.getCampName());
         holder.txtPrice.setText("$" + campsite.getCampPrice());
@@ -87,7 +105,6 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
             holder.imgCampsite.setImageResource(R.drawable.default_camp);
         }
 
-        // 👉 Mở chi tiết khi click vào item
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, CampsiteDetailActivity.class);
             intent.putExtra("name", campsite.getCampName());
@@ -98,7 +115,6 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
             context.startActivity(intent);
         });
 
-        // 👉 Khi click nút "Order"
         holder.btnOrder.setOnClickListener(v -> {
             cartManager.addCampsite(campsite);
             Intent intent = new Intent(context, CartActivity.class);
@@ -106,12 +122,9 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
         });
     }
 
-
-
-
     @Override
     public int getItemCount() {
-        return campsiteList.size();
+        return filteredList.size(); // 🔍 dùng filteredList
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

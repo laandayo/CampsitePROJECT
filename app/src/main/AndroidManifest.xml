@@ -69,5 +69,7 @@
         <activity
             android:name=".controller.SettingsActivity"
             android:exported="true" />
+        <activity android:name=".controller.campsite.FilterCampsiteActivity" />
+
     </application>
 </manifest>

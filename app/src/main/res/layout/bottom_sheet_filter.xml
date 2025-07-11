@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bộ lọc tìm kiếm"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Bộ lọc thành phố -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tỉnh thành"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <!-- Thanh tìm kiếm tỉnh thành -->
+        <EditText
+            android:id="@+id/edt_search_province"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Tìm kiếm tỉnh thành..."
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:padding="12dp"
+            android:background="@drawable/edittext_background"
+            android:maxLines="1" />
+
+        <!-- RecyclerView cho danh sách tỉnh thành -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn tỉnh thành (có thể chọn nhiều):"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_provinces"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/recyclerview_background"
+            android:scrollbars="vertical" />
+
+        <!-- Số lượng khách hàng -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số lượng khách hàng"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txt_quantity_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số khách: 1"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/holo_blue_dark" />
+
+        <SeekBar
+            android:id="@+id/seekbar_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="1" />
+
+        <!-- Chi tiêu tối thiểu -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chi tiêu tối thiểu"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txt_price_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Giá tối thiểu: 0 VND"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/holo_blue_dark" />
+
+        <SeekBar
+            android:id="@+id/seekbar_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10000000"
+            android:progress="0" />
+
+        <!-- Nút áp dụng -->
+        <Button
+            android:id="@+id/btnApplyFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Áp dụng bộ lọc"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/button_background"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <!-- Nút reset (tùy chọn) -->
+        <Button
+            android:id="@+id/btnResetFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xóa bộ lọc"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/holo_red_dark"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>
