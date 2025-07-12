@@ -1,6 +1,7 @@
 package com.lan.campsiteproject.controller.campsite;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,14 +19,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lan.campsiteproject.R;
@@ -52,6 +56,13 @@ public class ListCampsiteActivity extends AppCompatActivity {
     private EditText edtSearch;
     private BottomSheetDialog bottomSheetDialog;
     private Button btnRefresh;
+
+    private static final int PAGE_SIZE = 6;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private DocumentSnapshot lastVisible = null;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +79,32 @@ public class ListCampsiteActivity extends AppCompatActivity {
 
         // Setup RecyclerView
         recyclerView = findViewById(R.id.recyclerViewCampsite);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                if (!isLoading && !isLastPage && layoutManager != null) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        loadNextPage();
+                    }
+                }
+            }
+        });
+
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing); // ví dụ: 8dp
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, spacingInPixels, true));
         cartManager = CartManager.getInstance();
+        adapter = new CampsiteAdapter(this, new ArrayList<>(), cartManager);
+        recyclerView.setAdapter(adapter);
+
+
 
         // Setup search functionality
         setupSearch();
@@ -89,9 +124,13 @@ public class ListCampsiteActivity extends AppCompatActivity {
 
         btnRefresh = findViewById(R.id.btn_refresh_list);
         btnRefresh.setOnClickListener(v -> {
-            adapter.updateCampsites(fullList);
+            loadCampsites(); // Tải lại trang đầu tiên để giữ phân trang
             recyclerView.setVisibility(View.VISIBLE);
             btnRefresh.setVisibility(View.GONE);
+            TextView noResultText = findViewById(R.id.txt_no_result);
+            if (noResultText != null) {
+                noResultText.setVisibility(View.GONE); // Ẩn TextView
+            }
         });
 
     }
@@ -231,7 +270,7 @@ public class ListCampsiteActivity extends AppCompatActivity {
         });
 
         // Setup price seekbar
-        seekbarPrice.setProgress(0);
+        seekbarPrice.setProgress(1000);
         txtPrice.setText("Giá tối thiểu: " + String.format(Locale.getDefault(), "%,d", seekbarPrice.getProgress()) + " VND");
         seekbarPrice.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -271,27 +310,65 @@ public class ListCampsiteActivity extends AppCompatActivity {
     }
 
     private void loadCampsites() {
-        adapter = new CampsiteAdapter(this, new ArrayList<>(), cartManager);
-        recyclerView.setAdapter(adapter);
+        isLoading = true;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("campsites")
+                .orderBy("campName")
+                .limit(PAGE_SIZE)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        List<Campsite> newCampsites = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            newCampsites.add(doc.toObject(Campsite.class));
+                        }
+                        lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
+                        fullList.clear();
+                        fullList.addAll(newCampsites);
+                        adapter.updateCampsites(fullList);
+                        isLastPage = newCampsites.size() < PAGE_SIZE;
+                    } else {
+                        isLastPage = true;
+                    }
+                    isLoading = false;
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                    isLoading = false;
+                });
+    }
+    private void loadNextPage() {
+        if (isLoading || isLastPage || lastVisible == null) return;
+        isLoading = true;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("campsites")
+                .orderBy("campName")
+                .startAfter(lastVisible)
+                .limit(PAGE_SIZE)
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<Campsite> campsites = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                            Campsite campsite = doc.toObject(Campsite.class);
-                            campsites.add(campsite);
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        List<Campsite> newCampsites = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            newCampsites.add(doc.toObject(Campsite.class));
                         }
-                        fullList = campsites;
-                        adapter.updateCampsites(campsites);
+                        lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
+                        fullList.addAll(newCampsites); // vẫn giữ nếu bạn cần search/filter
+                        adapter.appendCampsites(newCampsites);
+                        isLastPage = newCampsites.size() < PAGE_SIZE;
                     } else {
-                        Toast.makeText(this, "Failed to load campsites", Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "Error loading campsites", task.getException());
+                        isLastPage = true;
                     }
+                    isLoading = false;
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi tải thêm dữ liệu", Toast.LENGTH_SHORT).show();
+                    isLoading = false;
                 });
     }
+
+
 
     private void searchCampsites(String keyword) {
         List<Campsite> filtered = new ArrayList<>();
@@ -340,7 +417,7 @@ public class ListCampsiteActivity extends AppCompatActivity {
         for (Campsite camp : fullList) {
             boolean matchesProvince = (provinces == null || provinces.isEmpty() ||
                     provinces.stream().anyMatch(p -> camp.getCampAddress().contains(p)));
-            boolean matchesGuests = camp.getLimite() >= guests;
+            boolean matchesGuests = camp.getQuantity() >= guests;
             boolean matchesPrice = camp.getCampPrice() >= minPrice;
 
             Log.d(TAG, "Checking campsite: " + camp.getCampName() +
@@ -425,4 +502,38 @@ public class ListCampsiteActivity extends AppCompatActivity {
             }
         }
     }
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+        private final int spanCount;
+        private final int spacing;
+        private final boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount;
+                outRect.right = (column + 1) * spacing / spanCount;
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount;
+                outRect.right = spacing - (column + 1) * spacing / spanCount;
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
+        }
+    }
+
 }

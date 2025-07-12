@@ -42,6 +42,14 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
         this.filteredList = new ArrayList<>(campsites);
         notifyDataSetChanged();
     }
+    public void appendCampsites(List<Campsite> moreCampsites) {
+        int start = filteredList.size();
+        filteredList.addAll(moreCampsites);
+        originalList.addAll(moreCampsites);
+        notifyItemRangeInserted(start, moreCampsites.size());
+    }
+
+
 
     public void filter(String keyword) { // 🔍 Hàm filter theo tên
         filteredList.clear();
@@ -116,7 +124,7 @@ public class CampsiteAdapter extends RecyclerView.Adapter<CampsiteAdapter.ViewHo
         });
 
         holder.btnOrder.setOnClickListener(v -> {
-            cartManager.addCampsite(campsite);
+            cartManager.addCampsite(campsite, context);
             Intent intent = new Intent(context, CartActivity.class);
             context.startActivity(intent);
         });

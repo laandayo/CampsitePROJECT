@@ -1,23 +1,47 @@
 package com.lan.campsiteproject.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public class Campsite {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Campsite implements Serializable {
+    @SerializedName("campId")
+    @Expose
     private String campId;
+    @SerializedName("campPrice")
+    @Expose
     private int campPrice;
+    @SerializedName("campOwner")
+    @Expose
     private String campOwner;
+    @SerializedName("campAddress")
+    @Expose
     private String campAddress;
+    @SerializedName("campName")
+    @Expose
     private String campName;
+    @SerializedName("campDescription")
+    @Expose
     private String campDescription;
+    @SerializedName("campImage")
+    @Expose
     private String campImage;
+    @SerializedName("campStatus")
+    @Expose
     private boolean campStatus;
+    @SerializedName("quantity")
+    @Expose
     private int quantity;
+    @SerializedName("campsiteOwnerName")
+    @Expose
     private String campsiteOwnerName;
-    private int limite; // nếu chưa có
+    @SerializedName("limite")
+    @Expose
+    private int limite;
 
-
-
-    public Campsite (){
-        
+    public Campsite() {
     }
 
     public Campsite(String campId, int quantity) {
@@ -25,14 +49,15 @@ public class Campsite {
         this.quantity = quantity;
     }
 
-    public Campsite(String campId, int campPrice, String campOwner, String campAddress, String campName, String campDecription,String campImage, boolean campStatus, String campsiteOwnerName) {
+    public Campsite(String campId, int campPrice, String campOwner, String campAddress, String campName,
+                    String campDescription, String campImage, boolean campStatus, String campsiteOwnerName) {
         this.campId = campId;
         this.campPrice = campPrice;
         this.campOwner = campOwner;
         this.campAddress = campAddress;
         this.campName = campName;
-        this.campDescription = campDecription;
-        this.campImage= campImage;
+        this.campDescription = campDescription;
+        this.campImage = campImage;
         this.campStatus = campStatus;
         this.campsiteOwnerName = campsiteOwnerName;
     }
@@ -53,9 +78,13 @@ public class Campsite {
         this.campPrice = campPrice;
     }
 
-    public String getCampOwner() { return campOwner; }
+    public String getCampOwner() {
+        return campOwner;
+    }
 
-    public void setCampOwner(String campOwner) { this.campOwner = campOwner; }
+    public void setCampOwner(String campOwner) {
+        this.campOwner = campOwner;
+    }
 
     public String getCampAddress() {
         return campAddress;
@@ -77,8 +106,8 @@ public class Campsite {
         return campDescription;
     }
 
-    public void setCampDescription(String campDecription) {
-        this.campDescription = campDecription;
+    public void setCampDescription(String campDescription) {
+        this.campDescription = campDescription;
     }
 
     public String getCampImage() {
@@ -112,7 +141,25 @@ public class Campsite {
     public void setCampsiteOwnerName(String campsiteOwnerName) {
         this.campsiteOwnerName = campsiteOwnerName;
     }
+
     public int getLimite() {
         return limite;
+    }
+
+    public void setLimite(int limite) {
+        this.limite = limite;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Campsite campsite = (Campsite) o;
+        return campId != null && campId.equals(campsite.campId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(campId);
     }
 }

@@ -25,158 +25,265 @@ public class CartActivity extends AppCompatActivity {
 
     private CartManager cartManager;
     private CartAdapter cartAdapter;
+    private CartPriceCalculator priceCalculator;
 
+    // UI Components
     private LinearLayout layoutCampsiteCard;
-    private TextView txtEmptyMessage, txtCampName, txtCampAddress, txtCampPrice, totalPriceTextView;
+    private TextView txtEmptyMessage, txtCampName, txtCampAddress, txtCampPrice;
     private ImageView imgCamp;
-    private EditText edtNumPeople;
     private RecyclerView recyclerView;
     private Button btnAddMoreGear, btnCheckout, btnCancelOrder;
+
+    // Price Calculator Components
+    private EditText edtNumAdults, edtNumChildren;
+    private ImageButton btnIncreaseAdults, btnDecreaseAdults;
+    private ImageButton btnIncreaseChildren, btnDecreaseChildren;
+    private Button btnSelectDate;
+    private TextView txtCampsiteTotal, totalPriceTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        // Initialize managers
         cartManager = CartManager.getInstance();
+        cartManager.restoreFromPreferences(this); // Khôi phục dữ liệu giỏ hàng
+        priceCalculator = new CartPriceCalculator(this, cartManager);
 
-        // Binding UI
+        // Initialize UI components in correct order
+        initializeViews();
+        setupRecyclerView();
+        setupPriceCalculator();  // Setup price calculator first
+        setupCampsiteInfo();     // Then setup campsite info
+        setupActionButtons();
+    }
+
+    private void initializeViews() {
+        // Main layout components
         layoutCampsiteCard = findViewById(R.id.layoutCampsiteCard);
         txtEmptyMessage = findViewById(R.id.txtEmptyCartMessage);
         imgCamp = findViewById(R.id.imgCartCampsite);
         txtCampName = findViewById(R.id.txtCartCampName);
         txtCampAddress = findViewById(R.id.txtCartCampAddress);
         txtCampPrice = findViewById(R.id.txtCartCampPrice);
-        totalPriceTextView = findViewById(R.id.totalPriceTextView);
-        edtNumPeople = findViewById(R.id.edtNumPeople);
         recyclerView = findViewById(R.id.cartRecyclerView);
         btnAddMoreGear = findViewById(R.id.btnAddMoreGear);
         btnCheckout = findViewById(R.id.btnCheckout);
         btnCancelOrder = findViewById(R.id.btnCancelOrder);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Price calculator components
+        edtNumAdults = findViewById(R.id.edtNumAdults);
+        edtNumChildren = findViewById(R.id.edtNumChildren);
+        btnIncreaseAdults = findViewById(R.id.btnIncreaseAdults);
+        btnDecreaseAdults = findViewById(R.id.btnDecreaseAdults);
+        btnIncreaseChildren = findViewById(R.id.btnIncreaseChildren);
+        btnDecreaseChildren = findViewById(R.id.btnDecreaseChildren);
+        btnSelectDate = findViewById(R.id.btnSelectDate);
+        txtCampsiteTotal = findViewById(R.id.txtCampsiteTotal);
+        totalPriceTextView = findViewById(R.id.totalPriceTextView);
+    }
 
-        setupCampsiteInfo();
-        setupListeners();
+    private void setupRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void setupPriceCalculator() {
+        // Check if all required views are initialized
+        if (edtNumAdults == null || edtNumChildren == null ||
+                btnIncreaseAdults == null || btnDecreaseAdults == null ||
+                btnIncreaseChildren == null || btnDecreaseChildren == null ||
+                btnSelectDate == null || txtCampsiteTotal == null || totalPriceTextView == null) {
+
+            // Log error or show toast for debugging
+            Toast.makeText(this, "Error: Some price calculator views are not initialized", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Initialize price calculator with UI components
+        priceCalculator.initializeComponents(
+                edtNumAdults, edtNumChildren,
+                btnIncreaseAdults, btnDecreaseAdults,
+                btnIncreaseChildren, btnDecreaseChildren,
+                btnSelectDate, txtCampsiteTotal, totalPriceTextView
+        );
+    }
+
+    private void setupCampsiteInfo() {
+        updateCampsiteInfo();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        cartAdapter = new CartAdapter(this, cartManager.getGearMap(), cartManager);
-        recyclerView.setAdapter(cartAdapter);
-        updateTotalPrice();
+        updateCartAdapter();
+        updateCampsiteInfo();
+        refreshPriceCalculation();
     }
 
-    private void setupCampsiteInfo() {
+    private void updateCartAdapter() {
+        if (cartAdapter == null) {
+            cartAdapter = new CartAdapter(this, cartManager.getGearMap(), cartManager);
+            cartAdapter.setOnTotalPriceChangeListener(this::refreshPriceCalculation);
+            recyclerView.setAdapter(cartAdapter);
+        } else {
+            cartAdapter.updateGearList(cartManager.getGearMap());
+            cartAdapter.setOnTotalPriceChangeListener(this::refreshPriceCalculation);
+        }
+    }
+
+    private void updateCampsiteInfo() {
         Campsite selected = cartManager.getSelectedCampsite();
 
         if (selected != null) {
             layoutCampsiteCard.setVisibility(View.VISIBLE);
-            txtEmptyMessage.setVisibility(View.GONE);
+
+            // Check if empty message card exists before hiding it
+            View emptyMessageCard = findViewById(R.id.cardEmptyMessage);
+            if (emptyMessageCard != null) {
+                emptyMessageCard.setVisibility(View.GONE);
+            }
 
             txtCampName.setText(selected.getCampName());
             txtCampAddress.setText("Địa chỉ: " + selected.getCampAddress());
-            txtCampPrice.setText("Giá: $" + selected.getCampPrice());
+            txtCampPrice.setText("Giá: $" + selected.getCampPrice() + "/ngày");
 
-            String image = selected.getCampImage();
-            if (!TextUtils.isEmpty(image)) {
-                if (image.endsWith(".jpg") || image.endsWith(".png")) {
-                    image = image.substring(0, image.lastIndexOf('.'));
-                }
+            loadCampsiteImage(selected);
+            setupCampsiteClickListeners(selected);
 
-                if (image.startsWith("http")) {
-                    Glide.with(this)
-                            .load(image)
-                            .placeholder(R.drawable.placeholder)
-                            .error(R.drawable.default_camp)
-                            .into(imgCamp);
-                } else {
-                    int resId = getResources().getIdentifier(image.trim(), "drawable", getPackageName());
-                    imgCamp.setImageResource(resId != 0 ? resId : R.drawable.default_camp);
+            // Only update price calculator if it's properly initialized
+            if (priceCalculator != null && isViewsInitialized()) {
+                try {
+                    priceCalculator.setCampsite(selected);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Error updating price calculator", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                imgCamp.setImageResource(R.drawable.default_camp);
             }
-
-            imgCamp.setOnClickListener(v -> {
-                Intent i = new Intent(this, CampsiteDetailActivity.class);
-                i.putExtra("name", selected.getCampName());
-                i.putExtra("price", selected.getCampPrice());
-                i.putExtra("address", selected.getCampAddress());
-                i.putExtra("description", selected.getCampDescription());
-                i.putExtra("image", selected.getCampImage());
-                startActivity(i);
-            });
-
-            txtCampName.setOnClickListener(v -> imgCamp.performClick());
-
         } else {
             layoutCampsiteCard.setVisibility(View.GONE);
-            txtEmptyMessage.setVisibility(View.VISIBLE);
-        }
 
-        edtNumPeople.setText(String.valueOf(cartManager.getNumPeople()));
-        edtNumPeople.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                try {
-                    int num = Integer.parseInt(edtNumPeople.getText().toString());
-                    cartManager.setNumPeople(num);
-                    updateTotalPrice();
-                } catch (Exception ignored) {}
+            // Check if empty message card exists before showing it
+            View emptyMessageCard = findViewById(R.id.cardEmptyMessage);
+            if (emptyMessageCard != null) {
+                emptyMessageCard.setVisibility(View.VISIBLE);
             }
-        });
+        }
     }
 
-    private void setupListeners() {
-        btnAddMoreGear.setOnClickListener(v ->
-                startActivity(new Intent(this, GearListActivity.class)));
-
-        btnCheckout.setOnClickListener(v -> showPaymentOptions());
-
-        btnCancelOrder.setOnClickListener(v -> {
-            new AlertDialog.Builder(this)
-                    .setTitle("Xác nhận huỷ đơn")
-                    .setMessage("Bạn có chắc muốn huỷ order này?")
-                    .setPositiveButton("Huỷ", (dialog, which) -> {
-                        cartManager.clearCart();
-                        Toast.makeText(this, "Đã huỷ order", Toast.LENGTH_SHORT).show();
-                        recreate();
-                    })
-                    .setNegativeButton("Không", null)
-                    .show();
-        });
-
-        findViewById(R.id.btnViewOrderHistory).setOnClickListener(v ->
-                startActivity(new Intent(this, OrderHistoryActivity.class))
-        );
+    private boolean isViewsInitialized() {
+        return edtNumAdults != null && edtNumChildren != null &&
+                txtCampsiteTotal != null && totalPriceTextView != null;
     }
 
-    private void updateTotalPrice() {
-        Campsite camp = cartManager.getSelectedCampsite();
-        int numPeople = cartManager.getNumPeople();
-        int total = 0;
+    private void loadCampsiteImage(Campsite campsite) {
+        if (imgCamp == null) return;
 
-        if (camp != null) {
-            int totalCampsite = camp.getCampPrice() * numPeople;
-            int totalGear = 0;
-            for (Map.Entry<Gear, Integer> entry : cartManager.getGearMap().entrySet()) {
-                totalGear += entry.getKey().getGearPrice() * entry.getValue();
+        String image = campsite.getCampImage();
+        if (!TextUtils.isEmpty(image)) {
+            if (image.endsWith(".jpg") || image.endsWith(".png")) {
+                image = image.substring(0, image.lastIndexOf('.'));
             }
-            total = totalCampsite + totalGear;
+
+            if (image.startsWith("http")) {
+                Glide.with(this)
+                        .load(image)
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.default_camp)
+                        .into(imgCamp);
+            } else {
+                int resId = getResources().getIdentifier(image.trim(), "drawable", getPackageName());
+                imgCamp.setImageResource(resId != 0 ? resId : R.drawable.default_camp);
+            }
+        } else {
+            imgCamp.setImageResource(R.drawable.default_camp);
+        }
+    }
+
+    private void setupCampsiteClickListeners(Campsite campsite) {
+        if (imgCamp == null || txtCampName == null) return;
+
+        View.OnClickListener campsiteClickListener = v -> {
+            Intent intent = new Intent(this, CampsiteDetailActivity.class);
+            intent.putExtra("name", campsite.getCampName());
+            intent.putExtra("price", campsite.getCampPrice());
+            intent.putExtra("address", campsite.getCampAddress());
+            intent.putExtra("description", campsite.getCampDescription());
+            intent.putExtra("image", campsite.getCampImage());
+            startActivity(intent);
+        };
+
+        imgCamp.setOnClickListener(campsiteClickListener);
+        txtCampName.setOnClickListener(campsiteClickListener);
+    }
+
+    private void setupActionButtons() {
+        // Add more gear button
+        if (btnAddMoreGear != null) {
+            btnAddMoreGear.setOnClickListener(v -> {
+                Intent intent = new Intent(this, GearListActivity.class);
+                startActivity(intent);
+            });
         }
 
-        totalPriceTextView.setText("Tổng: $" + total);
+        // Checkout button
+        if (btnCheckout != null) {
+            btnCheckout.setOnClickListener(v -> showPaymentOptions());
+        }
+
+        // Cancel order button
+        if (btnCancelOrder != null) {
+            btnCancelOrder.setOnClickListener(v -> {
+                new AlertDialog.Builder(this)
+                        .setTitle("Xác nhận huỷ đơn")
+                        .setMessage("Bạn có chắc muốn huỷ order này?")
+                        .setPositiveButton("Huỷ", (dialog, which) -> {
+                            cartManager.clearCart(this);
+                            Toast.makeText(this, "Đã huỷ order", Toast.LENGTH_SHORT).show();
+                            recreate();
+                        })
+                        .setNegativeButton("Không", null)
+                        .show();
+            });
+        }
+
+        // View order history button
+        View orderHistoryButton = findViewById(R.id.btnViewOrderHistory);
+        if (orderHistoryButton != null) {
+            orderHistoryButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, OrderHistoryActivity.class);
+                startActivity(intent);
+            });
+        }
+    }
+
+    private void refreshPriceCalculation() {
+        if (priceCalculator != null && isViewsInitialized()) {
+            try {
+                priceCalculator.refreshPriceCalculation();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error refreshing price calculation", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void showPaymentOptions() {
+        if (cartManager.getSelectedCampsite() == null) {
+            Toast.makeText(this, "Vui lòng chọn campsite trước khi thanh toán!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Chọn phương thức thanh toán");
 
-        String[] options = {"Paylater", "Paynow (Banking/ZaloPay)"};
+        String[] options = {"Paylater", "Paynow (VN Pay)"};
         builder.setItems(options, (dialog, which) -> {
-            if (which == 0) handlePayLater();
-            else handlePayNow();
+            if (which == 0) {
+                handlePayLater();
+            } else {
+                handlePayNow();
+            }
         });
 
         builder.setNegativeButton("Hủy", null);
@@ -184,28 +291,38 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void handlePayLater() {
-        Campsite camp = cartManager.getSelectedCampsite();
+        Campsite campsite = cartManager.getSelectedCampsite();
         Map<Gear, Integer> gearMap = cartManager.getGearMap();
-        int numPeople = cartManager.getNumPeople();
 
-        if (camp == null) {
+        if (campsite == null) {
             Toast.makeText(this, "Chưa chọn Campsite!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int total = camp.getCampPrice() * numPeople;
-        for (Map.Entry<Gear, Integer> entry : gearMap.entrySet()) {
-            total += entry.getKey().getGearPrice() * entry.getValue();
-        }
+        try {
+            double totalAmount = priceCalculator.getGrandTotal();
+            int adults = priceCalculator.getNumberOfAdults();
+            int children = priceCalculator.getNumberOfChildren();
+            int numberOfDays = priceCalculator.getNumberOfDays();
 
-        OrderManager.getInstance().addOrder(camp, gearMap, total, "Đang xác nhận thanh toán");
-        Toast.makeText(this, "Đã đặt hàng theo hình thức Paylater", Toast.LENGTH_LONG).show();
-        cartManager.clearCart();
-        finish();
+            String orderDetails = String.format(
+                    "Campsite: %s\nSố người lớn: %d\nSố trẻ em: %d\nSố ngày: %d\nTổng tiền: $%.2f",
+                    campsite.getCampName(), adults, children, numberOfDays, totalAmount
+            );
+
+            OrderManager.getInstance().addOrder(campsite, gearMap, (int) totalAmount, "Đang xác nhận thanh toán");
+
+            Toast.makeText(this, "Đã đặt hàng theo hình thức Paylater\n" + orderDetails, Toast.LENGTH_LONG).show();
+
+            cartManager.clearCart(this);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi xử lý thanh toán. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void handlePayNow() {
-        // Mở module thanh toán khác
         Toast.makeText(this, "Chức năng Paynow đang được phát triển", Toast.LENGTH_SHORT).show();
     }
 }
