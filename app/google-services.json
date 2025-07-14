@@ -14,11 +14,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "333169866140-2eonu95idqqcos33fqno16pdonbm8rqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lan.campsiteproject",
+            "certificate_hash": "7effcf02478369ed37500a175e9e0aeac16910d2"
+          }
+        },
+        {
+          "client_id": "333169866140-ajblccr96d9eb10bubcrbtiuuadhv1hu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lan.campsiteproject",
+            "certificate_hash": "478aae4ef26440e1f66eb10d97d9ef7b3566e037"
+          }
+        },
+        {
           "client_id": "333169866140-jg4gn7jghladkuu0kvnp9ua9pe5vvvgm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lan.campsiteproject",
             "certificate_hash": "cfcd3f6c4664d40e0cafab3bbceb8e6d81ddacce"
+          }
+        },
+        {
+          "client_id": "333169866140-la5og6mmta40g6e792gk8fkhs61064v3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lan.campsiteproject",
+            "certificate_hash": "0632c725277cd1679f208e8eeb8c37a99120c103"
+          }
+        },
+        {
+          "client_id": "333169866140-n3g90h1lab798tgj1um9so3knvhu3e66.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lan.campsiteproject",
+            "certificate_hash": "942d33a0124663b3f44f7bcf8142bc28ca7f6922"
           }
         },
         {

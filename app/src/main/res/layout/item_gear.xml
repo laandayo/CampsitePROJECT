@@ -1,58 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
-    android:elevation="4dp"
-    android:radius="12dp"
+    android:layout_margin="8dp"
+    app:cardElevation="12dp"
+    app:cardCornerRadius="20dp"
     android:foreground="?android:attr/selectableItemBackground"
-    android:background="@color/white">
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:background="@drawable/card_gradient_bg">
 
-        <ImageView
-            android:id="@+id/imgGear"
+        <!-- Container cho image với overlay -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_gear"
-            android:background="@drawable/rounded_image_bg" />
+            android:layout_height="200dp">
 
-        <TextView
-            android:id="@+id/gearName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tên Gear"
-            android:textColor="#000"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:layout_marginTop="6dp" />
+            <ImageView
+                android:id="@+id/imgGear"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_gear"
+                android:background="@drawable/rounded_top_image_bg" />
 
-        <TextView
-            android:id="@+id/gearPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="$0"
-            android:textColor="#E91E63"
-            android:textSize="14sp"
-            android:layout_marginTop="2dp" />
+            <!-- Overlay gradient cho image -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignBottom="@id/imgGear"
+                android:background="@drawable/image_overlay_gradient" />
 
-        <Button
-            android:id="@+id/btnBuyGear"
+            <!-- Badge sale nếu có -->
+            <TextView
+                android:id="@+id/saleBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="12dp"
+                android:background="@drawable/sale_badge_bg"
+                android:text="SALE"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:padding="6dp"
+                android:visibility="gone"/>
+
+            <!-- Favorite icon -->
+            <ImageView
+                android:id="@+id/favoriteIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_margin="12dp"
+                android:src="@drawable/ic_favorite_border"
+                android:background="@drawable/favorite_icon_bg"
+                android:padding="6dp"
+                android:tint="#FF5722"/>
+        </RelativeLayout>
+
+        <!-- Content container -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="16dp"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:text="Thêm"
-            android:textSize="14sp"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#fff"
-            android:layout_marginTop="6dp"/>
+            android:layout_height="wrap_content">
+
+            <!-- Tên sản phẩm -->
+            <TextView
+                android:id="@+id/gearName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tên Gear"
+                android:textColor="#212121"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:lineSpacingMultiplier="1.2"/>
+
+            <!-- Rating và reviews -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_star"
+                    android:tint="#FFC107"/>
+
+                <TextView
+                    android:id="@+id/gearRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4.5"
+                    android:textColor="#757575"
+                    android:textSize="12sp"
+                    android:layout_marginStart="4dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(24 reviews)"
+                    android:textColor="#9E9E9E"
+                    android:textSize="12sp"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Price container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/gearPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="$0"
+                    android:textColor="#E91E63"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/originalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$120"
+                    android:textColor="#9E9E9E"
+                    android:textSize="12sp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <!-- Button với gradient và ripple effect -->
+            <Button
+                android:id="@+id/btnBuyGear"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Thêm"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_gradient_bg"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="12dp"
+                android:elevation="4dp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

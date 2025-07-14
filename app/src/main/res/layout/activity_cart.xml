@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f1f1f1"
-    android:padding="12dp">
+    android:background="#f8f9fa"
+    android:padding="16dp">
 
     <LinearLayout
         android:orientation="vertical"
@@ -20,21 +20,21 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:elevation="4dp"
-                android:radius="12dp"
+                android:layout_marginBottom="16dp"
+                android:elevation="8dp"
+                android:radius="16dp"
                 android:background="#fff">
 
                 <LinearLayout
                     android:orientation="vertical"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <ImageView
                         android:id="@+id/imgCartCampsite"
                         android:layout_width="match_parent"
-                        android:layout_height="180dp"
+                        android:layout_height="200dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/default_camp"
                         android:background="@drawable/rounded_image_bg" />
@@ -45,9 +45,9 @@
                         android:layout_height="wrap_content"
                         android:text="Tên campsite"
                         android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:textColor="#000"
-                        android:layout_marginTop="8dp" />
+                        android:textSize="22sp"
+                        android:textColor="#1a1a1a"
+                        android:layout_marginTop="12dp" />
 
                     <TextView
                         android:id="@+id/txtCartCampAddress"
@@ -55,107 +55,346 @@
                         android:layout_height="wrap_content"
                         android:text="Địa chỉ"
                         android:textColor="#666"
+                        android:textSize="14sp"
                         android:layout_marginTop="4dp" />
 
                     <TextView
                         android:id="@+id/txtCartCampPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Giá: $0"
-                        android:textColor="#444"
+                        android:text="Giá: $0/ngày"
+                        android:textColor="#2E7D32"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_marginTop="4dp" />
 
+                    <!-- Date Selection -->
                     <LinearLayout
                         android:orientation="horizontal"
-                        android:layout_marginTop="8dp"
-                        android:layout_width="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical">
 
                         <TextView
-                            android:text="Số người:"
+                            android:text="📅 Ngày order:"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <EditText
-                            android:id="@+id/edtNumPeople"
-                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:text="1"
-                            android:layout_marginStart="8dp"/>
+                            android:textSize="16sp"
+                            android:textColor="#333"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btnSelectDate"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:text="Chọn ngày"
+                            android:backgroundTint="#E3F2FD"
+                            android:textColor="#FFFFFF"
+                            android:layout_marginStart="12dp"
+                            android:textSize="14sp"
+                            android:background="@drawable/rounded_button_outline" />
                     </LinearLayout>
+
+                    <!-- People Selection Container -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_marginTop="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_container_bg"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:text="👥 Số lượng người"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="#333"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="12dp" />
+
+                        <!-- Adults Selection -->
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:text="👨‍👩‍👧‍👦 Người lớn:"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="15sp"
+                                android:textColor="#444" />
+
+                            <ImageButton
+                                android:id="@+id/btnDecreaseAdults"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:src="@drawable/ic_remove"
+                                android:background="@drawable/round_button_bg"
+                                android:backgroundTint="#FF5722"
+                                android:layout_marginEnd="8dp" />
+
+                            <EditText
+                                android:id="@+id/edtNumAdults"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:inputType="number"
+                                android:text="1"
+                                android:textAlignment="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:background="@drawable/rounded_edittext_bg"
+                                android:layout_marginHorizontal="8dp" />
+
+                            <ImageButton
+                                android:id="@+id/btnIncreaseAdults"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:src="@drawable/ic_add"
+                                android:background="@drawable/round_button_bg"
+                                android:backgroundTint="#4CAF50"
+                                android:layout_marginStart="8dp" />
+                        </LinearLayout>
+
+                        <!-- Children Selection -->
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:text="👶 Trẻ em (nhỏ hơn 13 tuổi):"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="15sp"
+                                android:textColor="#444" />
+
+                            <ImageButton
+                                android:id="@+id/btnDecreaseChildren"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:src="@drawable/ic_remove"
+                                android:background="@drawable/round_button_bg"
+                                android:backgroundTint="#FF5722"
+                                android:layout_marginEnd="8dp" />
+
+                            <EditText
+                                android:id="@+id/edtNumChildren"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:inputType="number"
+                                android:text="0"
+                                android:textAlignment="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:background="@drawable/rounded_edittext_bg"
+                                android:layout_marginHorizontal="8dp" />
+
+                            <ImageButton
+                                android:id="@+id/btnIncreaseChildren"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:src="@drawable/ic_add"
+                                android:background="@drawable/round_button_bg"
+                                android:backgroundTint="#4CAF50"
+                                android:layout_marginStart="8dp" />
+                        </LinearLayout>
+
+                        <!-- Pricing Info -->
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_marginTop="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/price_info_bg"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:text="💰 Thông tin giá:"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:textColor="#666"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:text="• Người lớn: Giá đầy đủ"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="11sp"
+                                android:textColor="#666" />
+
+                            <TextView
+                                android:text="• Trẻ em: 50% giá người lớn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="11sp"
+                                android:textColor="#666" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Campsite Total Price -->
+                    <TextView
+                        android:id="@+id/txtCampsiteTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tổng tiền campsite: $0"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#2E7D32"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/total_price_bg"
+                        android:padding="8dp" />
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
         <!-- 🔻 Thông báo chưa chọn Campsite -->
-        <TextView
-            android:id="@+id/txtEmptyCartMessage"
-            android:layout_width="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardEmptyMessage"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bạn chưa chọn campsite nào"
-            android:textSize="16sp"
-            android:textColor="#888888"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:visibility="gone" />
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:radius="16dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="24dp"
+                android:gravity="center">
+
+                <TextView
+                    android:text="🏕️"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="48sp"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/txtEmptyCartMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bạn chưa chọn campsite nào"
+                    android:textSize="16sp"
+                    android:textColor="#666"
+                    android:gravity="center" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Nút thêm Gear -->
         <Button
             android:id="@+id/btnAddMoreGear"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="THÊM ĐỒ DÃ NGOẠI"
+            android:layout_height="56dp"
+            android:text="🎒 THÊM ĐỒ DÃ NGOẠI"
             android:backgroundTint="#4CAF50"
             android:textColor="#fff"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"/>
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_button_bg"
+            android:elevation="4dp" />
 
         <!-- Danh sách Gear -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cartRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
 
         <!-- Tổng tiền -->
-        <TextView
-            android:id="@+id/totalPriceTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tổng: $0"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"/>
-
-        <!-- Nút thanh toán -->
-        <Button
-            android:id="@+id/btnCheckout"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="THANH TOÁN"
-            android:backgroundTint="#AA00FF"
-            android:textColor="#ffffff"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:radius="12dp">
 
-        <!-- Nút huỷ Order -->
-        <Button
-            android:id="@+id/btnCancelOrder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="HUỶ ORDER"
-            android:backgroundTint="#F44336"
-            android:textColor="#ffffff"
-            android:layout_marginTop="8dp" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/total_summary_bg">
 
-        <!-- Nút xem lịch sử -->
-        <Button
-            android:id="@+id/btnViewOrderHistory"
+                <TextView
+                    android:text="📊 Tổng kết đơn hàng"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#333"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/totalPriceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💰 Tổng cộng: $0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#2E7D32" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="XEM ĐƠN HÀNG CỦA TÔI"
-            android:backgroundTint="#2196F3"
-            android:textColor="#fff"
-            android:layout_marginTop="12dp"/>
+            android:layout_height="wrap_content">
+
+            <!-- Nút thanh toán -->
+            <Button
+                android:id="@+id/btnCheckout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="💳 THANH TOÁN"
+                android:backgroundTint="#9C27B0"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/rounded_button_bg"
+                android:elevation="4dp" />
+
+            <!-- Nút huỷ Order -->
+            <Button
+                android:id="@+id/btnCancelOrder"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="❌ HUỶ ORDER"
+                android:backgroundTint="#F44336"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/rounded_button_bg"
+                android:elevation="4dp" />
+
+            <!-- Nút xem lịch sử -->
+            <Button
+                android:id="@+id/btnViewOrderHistory"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="📋 XEM ĐƠN HÀNG CỦA TÔI"
+                android:backgroundTint="#2196F3"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/rounded_button_bg"
+                android:elevation="4dp" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

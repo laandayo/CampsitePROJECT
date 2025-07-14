@@ -91,7 +91,7 @@ public class CampsiteDetailActivity extends AppCompatActivity {
                 campsite.setCampDescription(descStr);
                 campsite.setCampImage(imgUrl);
 
-                cartManager.addCampsite(campsite);
+                cartManager.addCampsite(campsite, v.getContext());
 
                 Intent intent = new Intent(CampsiteDetailActivity.this, CartActivity.class);
                 startActivity(intent);

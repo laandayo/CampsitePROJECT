@@ -2,6 +2,7 @@ package com.lan.campsiteproject.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +25,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private final Context context;
     private final List<Gear> gearList;
     private final CartManager cartManager;
+    private OnTotalPriceChangeListener totalPriceChangeListener;
+
+    public interface OnTotalPriceChangeListener {
+        void onTotalPriceChanged();
+    }
 
     public CartAdapter(Context context, Map<Gear, Integer> gearMap, CartManager cartManager) {
         this.context = context;
         this.gearList = new ArrayList<>(gearMap.keySet());
         this.cartManager = cartManager;
+        Log.d("CartAdapter", "Initialized with gearMap size: " + gearMap.size());
+    }
+
+    public void setOnTotalPriceChangeListener(OnTotalPriceChangeListener listener) {
+        this.totalPriceChangeListener = listener;
     }
 
     @NonNull
@@ -42,13 +53,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Gear gear = gearList.get(position);
         int quantity = cartManager.getGearMap().getOrDefault(gear, 0);
+        double gearPrice = gear.getGearPrice();
+        double totalGearPrice = gearPrice * quantity;
 
         holder.gearName.setText(gear.getGearName());
-        holder.gearPrice.setText("$" + gear.getGearPrice());
+        holder.gearPrice.setText(String.format("$%.2f", gearPrice));
         holder.gearQuantity.setText(String.valueOf(quantity));
-        holder.totalPrice.setText("Tổng: $" + (gear.getGearPrice() * quantity));
+        holder.totalPrice.setText(String.format("Tổng: $%.2f", totalGearPrice));
+        Log.d("CartAdapter", "Binding gear: " + gear.getGearName() + ", quantity: " + quantity);
 
-        // ✅ Load hình ảnh gear đúng cách
+        loadGearImage(holder, gear);
+        setupClickListeners(holder, gear, position);
+    }
+
+    private void loadGearImage(ViewHolder holder, Gear gear) {
         String image = gear.getGearImage();
         if (!TextUtils.isEmpty(image)) {
             if (image.startsWith("http")) {
@@ -56,46 +74,75 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                         .load(image)
                         .placeholder(R.drawable.placeholder)
                         .error(R.drawable.default_gear)
+                        .centerCrop()
                         .into(holder.imgGear);
             } else {
                 if (image.endsWith(".jpg") || image.endsWith(".png")) {
                     image = image.substring(0, image.lastIndexOf('.'));
                 }
                 int resId = context.getResources().getIdentifier(image.trim(), "drawable", context.getPackageName());
-                if (resId != 0) {
-                    holder.imgGear.setImageResource(resId);
-                } else {
-                    holder.imgGear.setImageResource(R.drawable.default_gear);
-                }
+                holder.imgGear.setImageResource(resId != 0 ? resId : R.drawable.default_gear);
             }
         } else {
             holder.imgGear.setImageResource(R.drawable.default_gear);
         }
+    }
 
-        // Tăng số lượng
+    private void setupClickListeners(ViewHolder holder, Gear gear, int position) {
         holder.btnIncrease.setOnClickListener(v -> {
-            cartManager.updateGearQuantity(gear, quantity + 1);
+            int newQty = cartManager.getGearMap().getOrDefault(gear, 0) + 1;
+            cartManager.updateGearQuantity(gear, newQty, context);
             notifyItemChanged(position);
+            if (totalPriceChangeListener != null) totalPriceChangeListener.onTotalPriceChanged();
         });
 
-        // Giảm số lượng
         holder.btnDecrease.setOnClickListener(v -> {
-            int newQty = quantity - 1;
+            int oldQty = cartManager.getGearMap().getOrDefault(gear, 0);
+            int newQty = oldQty - 1;
             if (newQty <= 0) {
-                cartManager.removeGear(gear);
+                cartManager.removeGear(gear, context);
                 gearList.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, gearList.size());
             } else {
-                cartManager.updateGearQuantity(gear, newQty);
+                cartManager.updateGearQuantity(gear, newQty, context);
                 notifyItemChanged(position);
             }
+            if (totalPriceChangeListener != null) totalPriceChangeListener.onTotalPriceChanged();
         });
+
+        setupButtonEffects(holder);
+    }
+
+    private void setupButtonEffects(ViewHolder holder) {
+        View.OnTouchListener touchEffect = (v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.setAlpha(0.7f);
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.setAlpha(1.0f);
+                    break;
+            }
+            return false;
+        };
+
+        holder.btnIncrease.setOnTouchListener(touchEffect);
+        holder.btnDecrease.setOnTouchListener(touchEffect);
     }
 
     @Override
     public int getItemCount() {
+        Log.d("CartAdapter", "getItemCount: " + gearList.size());
         return gearList.size();
+    }
+
+    public void updateGearList(Map<Gear, Integer> newGearMap) {
+        this.gearList.clear();
+        this.gearList.addAll(newGearMap.keySet());
+        notifyDataSetChanged();
+        Log.d("CartAdapter", "updateGearList: New gearMap size: " + newGearMap.size());
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

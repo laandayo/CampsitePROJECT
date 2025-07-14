@@ -30,7 +30,7 @@ public class ListGearActivity extends AppCompatActivity {
         recyclerViewGear = findViewById(R.id.recyclerGear);
         gearList = new ArrayList<>();
         gearAdapter = new GearAdapter(this, gearList, gear -> {
-            CartManager.getInstance().addGear(gear);
+            CartManager.getInstance().addGear(gear,ListGearActivity.this );
             Toast.makeText(this, "Gear added to cart", Toast.LENGTH_SHORT).show();
         });
 

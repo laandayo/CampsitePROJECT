@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Bước 2: Yêu cầu quyền thông báo nếu Android 13+
         requestNotificationPermission();
+
+        //cập nhật giỏ hàng nếu có
+        CartManager.getInstance().restoreFromPreferences(this);
     }
 
     private void getAccounts() {
