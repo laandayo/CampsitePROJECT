@@ -9,111 +9,111 @@
 
     <!-- Custom Toolbar -->
     <androidx.appcompat.widget.Toolbar
-    android:id="@+id/toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:layout_marginTop="30dp"
-    android:background="@color/colorPrimaryDark"
-    android:elevation="4dp"
-    android:minHeight="?attr/actionBarSize"
-    app:contentInsetStart="16dp"
-    app:contentInsetEnd="16dp">
-
-    <!-- LinearLayout chứa tất cả các thành phần -->
-    <LinearLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="5">
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorPrimaryDark"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetStart="16dp"
+        app:contentInsetEnd="16dp">
 
-        <!-- Search View (4/5 width) -->
-        <RelativeLayout
-            android:id="@+id/search_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:layout_margin="8dp"
-            android:background="@drawable/bg_search"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp">
-
-            <ImageView
-                android:id="@+id/ic_search"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:src="@android:drawable/ic_menu_search"
-                android:tint="@android:color/darker_gray" />
-
-            <EditText
-                android:id="@+id/edt_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@id/ic_search"
-                android:background="@null"
-                android:hint="Tìm kiếm..."
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1"
-                android:paddingEnd="8dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-        <!-- Nút bên phải (1/5 width) -->
+        <!-- LinearLayout chứa tất cả các thành phần -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
             android:orientation="horizontal"
-            android:paddingHorizontal="4dp">
+            android:weightSum="5">
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp">
+            <!-- Search View (4/5 width) -->
+            <RelativeLayout
+                android:id="@+id/search_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:layout_margin="8dp"
+                android:background="@drawable/bg_search"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp">
+
+                <ImageView
+                    android:id="@+id/ic_search"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:src="@android:drawable/ic_menu_search"
+                    android:tint="@android:color/darker_gray" />
+
+                <EditText
+                    android:id="@+id/edt_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@id/ic_search"
+                    android:background="@null"
+                    android:hint="Tìm kiếm..."
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingEnd="8dp"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <!-- Nút bên phải (1/5 width) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp">
+
+                    <ImageButton
+                        android:id="@+id/btn_cart"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_cart"/>
+
+                    <TextView
+                        android:id="@+id/cart_badge"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="@android:color/holo_red_dark"
+                        android:gravity="center"
+                        android:text="3"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp"
+                        android:visibility="visible" />
+                </FrameLayout>
 
                 <ImageButton
-                    android:id="@+id/btn_cart"
+                    android:id="@+id/btn_filter"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_cart"/>
-
-                <TextView
-                    android:id="@+id/cart_badge"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="@android:color/holo_red_dark"
-                    android:gravity="center"
-                    android:text="3"
-                    android:textColor="@android:color/white"
-                    android:textSize="10sp"
-                    android:visibility="visible" />
-            </FrameLayout>
-
-            <ImageButton
-                android:id="@+id/btn_filter"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_filter"
-                />
+                    android:src="@drawable/ic_filter"
+                    />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</androidx.appcompat.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -146,14 +146,14 @@
 
 
     </RelativeLayout>
-        <Button
-    android:id="@+id/btn_refresh_list"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Làm mới"
-    android:layout_gravity="center_horizontal"
-    android:visibility="gone"
-    android:layout_marginTop="8dp" />
+    <Button
+        android:id="@+id/btn_refresh_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Làm mới"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:layout_marginTop="8dp" />
 
     <!-- Multi Action Button -->
     <Button

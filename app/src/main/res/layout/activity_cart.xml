@@ -91,7 +91,7 @@
                             android:layout_weight="1"
                             android:text="Chọn ngày"
                             android:backgroundTint="#E3F2FD"
-                            android:textColor="#1976D2"
+                            android:textColor="#FFFFFF"
                             android:layout_marginStart="12dp"
                             android:textSize="14sp"
                             android:background="@drawable/rounded_button_outline" />

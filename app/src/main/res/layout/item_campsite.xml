@@ -1,55 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    card_view:cardCornerRadius="8dp">
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="8dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:background="@android:color/white">
 
-        <ImageView
-            android:id="@+id/imgCampImage"
+        <!-- Image Container with overlay -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerCrop" />
+            android:layout_height="160dp">
 
-        <TextView
-            android:id="@+id/txtCampName"
+            <ImageView
+                android:id="@+id/imgCampImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_camp" />
+
+            <!-- Gradient overlay -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/gradient_overlay" />
+
+            <!-- Favorite button -->
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/circle_white_bg"
+                android:src="@drawable/ic_favorite_border"
+                android:padding="8dp"
+                android:elevation="4dp" />
+
+            <!-- Rating badge -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:layout_margin="12dp"
+                android:background="@drawable/rating_badge_bg"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:elevation="4dp">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_star"
+                    android:tint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/txtRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4.5"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="4dp" />
+            </LinearLayout>
+
+            <!-- Discount badge (if applicable) -->
+            <TextView
+                android:id="@+id/txtDiscount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/discount_badge_bg"
+                android:padding="4dp"
+                android:text="-20%"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:elevation="4dp" />
+        </FrameLayout>
+
+        <!-- Content Container -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Camp Name"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:orientation="vertical"
+            android:padding="12dp">
 
-        <TextView
-            android:id="@+id/txtCampPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="$100"
-            android:textSize="16sp"
-            android:layout_marginTop="4dp" />
+            <!-- Camp Name -->
+            <TextView
+                android:id="@+id/txtCampName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Beautiful Mountain Camp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:maxLines="1"
+                android:ellipsize="end" />
 
-        <TextView
-            android:id="@+id/txtCampAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="123 Street, City"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp" />
+            <!-- Location with icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:gravity="center_vertical">
 
-        <Button
-            android:id="@+id/btnOrder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Order"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp" />
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_location"
+                    android:tint="@android:color/darker_gray" />
 
+                <TextView
+                    android:id="@+id/txtCampAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Da Nang, Vietnam"
+                    android:textSize="11sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginStart="3dp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
+            <!-- Amenities -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_people"
+                    android:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/txtCapacity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhiều"
+                    android:textSize="10sp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginStart="3dp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="10dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginHorizontal="6dp" />
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_wifi"
+                    android:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WiFi"
+                    android:textSize="10sp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginStart="3dp" />
+            </LinearLayout>
+
+            <!-- Price and Order Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Current price -->
+                    <TextView
+                        android:id="@+id/txtCampPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$37000"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="/ngày"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Order Button -->
+                <Button
+                    android:id="@+id/btnOrder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="ĐẶT NGAY"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/button_primary_bg"
+                    android:paddingHorizontal="12dp"
+                    android:minWidth="0dp" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

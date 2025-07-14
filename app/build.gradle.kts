@@ -55,5 +55,11 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("androidx.cardview:cardview:1.0.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
-
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+// Nếu muốn SwipeRefreshLayout:
+// implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+// Nếu muốn Material Components:
+// implementation 'com.google.android.material:material:1.9.0'
 }

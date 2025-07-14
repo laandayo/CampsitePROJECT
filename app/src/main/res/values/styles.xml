@@ -20,5 +20,21 @@
         <item name="android:elevation">4dp</item>
         <item name="titleTextColor">@android:color/white</item>
         <item name="subtitleTextColor">@android:color/white</item>
+        <item name="android:background">@drawable/button_gradient_bg</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
+    <style name="GearButtonMaterial" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">@color/button_tint</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">25dp</item>
+        <item name="rippleColor">#80FFFFFF</item>
+    </style>
+
 </resources>
