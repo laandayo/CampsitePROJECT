@@ -1,201 +1,201 @@
 package com.lan.campsiteproject.model;
 
-//import java.sql.Timestamp;
-//
-//public class Order extends Gear {
-//    private int ordersId;
-//    private Timestamp timeStamp;
-//    private int booker;
-//    private int campsiteId;
-//    private Timestamp startDate;
-//    private Timestamp endDate;
-//    private boolean approveStatus;
-//    private boolean paymentStatus;
-//    private int quantity;
-//    private int totalAmount;
-//    private int bookingPrice;
-//    private String bookerName;
-//    private int ownerIsRequired;
-//
-//    public Order(int booker, int campsiteId, Timestamp startDate, Timestamp endDate, boolean approveStatus, boolean paymentStatus, int quantity, int totalAmount, int bookingPrice, int ownerIsRequired) {
-//        this.booker = booker;
-//        this.campsiteId = campsiteId;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.approveStatus = approveStatus;
-//        this.paymentStatus = paymentStatus;
-//        this.quantity = quantity;
-//        this.totalAmount = totalAmount;
-//        this.bookingPrice = bookingPrice;
-//        this.ownerIsRequired = ownerIsRequired;
-//    }
-//
-//    public Order(int booker, int campsiteId, Timestamp startDate, Timestamp endDate, boolean approveStatus, boolean paymentStatus, int quantity, int totalAmount, int bookingPrice) {
-//        this.booker = booker;
-//        this.campsiteId = campsiteId;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.approveStatus = approveStatus;
-//        this.paymentStatus = paymentStatus;
-//        this.quantity = quantity;
-//        this.totalAmount = totalAmount;
-//        this.bookingPrice = bookingPrice;
-//    }
-//
-//
-//
-//    public Order() {
-//    }
-//
-//    public Order(int ordersId, Timestamp timeStamp, int booker, Timestamp startDate, Timestamp endDate, boolean approveStatus, boolean paymentStatus, int quantity) {
-//        this.ordersId = ordersId;
-//        this.timeStamp = timeStamp;
-//        this.booker = booker;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.approveStatus = approveStatus;
-//        this.paymentStatus = paymentStatus;
-//        this.quantity = quantity;
-//    }
-//
-//    public int getOrdersId() {
-//        return ordersId;
-//    }
-//
-//    public void setOrdersId(int ordersId) {
-//        this.ordersId = ordersId;
-//    }
-//
-//    public Timestamp getTimeStamp() {
-//        return timeStamp;
-//    }
-//
-//    public void setTimeStamp(Timestamp timeStamp) {
-//        this.timeStamp = timeStamp;
-//    }
-//
-//    public int getBooker() {
-//        return booker;
-//    }
-//
-//    public void setBooker(int booker) {
-//        this.booker = booker;
-//    }
-//
-//    public Timestamp getStartDate() {
-//        return startDate;
-//    }
-//
-//    public void setStartDate(Timestamp startDate) {
-//        this.startDate = startDate;
-//    }
-//
-//    public Timestamp getEndDate() {
-//        return endDate;
-//    }
-//
-//    public void setEndDate(Timestamp endDate) {
-//        this.endDate = endDate;
-//    }
-//
-//    public boolean isApproveStatus() {
-//        return approveStatus;
-//    }
-//
-//    public void setApproveStatus(boolean approveStatus) {
-//        this.approveStatus = approveStatus;
-//    }
-//
-//    public boolean isPaymentStatus() {
-//        return paymentStatus;
-//    }
-//
-//    public void setPaymentStatus(boolean paymentStatus) {
-//        this.paymentStatus = paymentStatus;
-//    }
-//
-//    public int getQuantity() {
-//        return quantity;
-//    }
-//
-//    public void setQuantity(int quantity) {
-//        this.quantity = quantity;
-//    }
-//
-//    public int getCampsiteId() {
-//        return campsiteId;
-//    }
-//
-//    public void setCampsiteId(int campsiteId) {
-//        this.campsiteId = campsiteId;
-//    }
-//
-//    public int getTotalAmount() {
-//        return totalAmount;
-//    }
-//
-//    public void setTotalAmount(int totalAmount) {
-//        this.totalAmount = totalAmount;
-//    }
-//
-//    public int getBookingPrice() {
-//        return bookingPrice;
-//    }
-//
-//    public void setBookingPrice(int bookingPrice) {
-//        this.bookingPrice = bookingPrice;
-//    }
-//
-//    public String getBookerName() {
-//        return bookerName;
-//    }
-//
-//    public void setBookerName(String bookerName) {
-//        this.bookerName = bookerName;
-//    }
-//
-//    public int getOwnerIsRequired() {
-//        return ownerIsRequired;
-//    }
-//
-//    public void setOwnerIsRequired(int ownerIsRequired) {
-//        this.ownerIsRequired = ownerIsRequired;
-//    }
-//}
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-
-import com.lan.campsiteproject.model.Campsite;
-import com.lan.campsiteproject.model.Gear;
-
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Objects;
 
-public class Order {
+public class Order implements Serializable {
+    @SerializedName("orderId")
+    @Expose
+    private String orderId;
+    @SerializedName("timeStamp")
+    @Expose
+    private Timestamp timeStamp;
+    @SerializedName("booker")
+    @Expose
+    private String booker;
+    @SerializedName("campsite")
+    @Expose
     private Campsite campsite;
+    @SerializedName("gearMap")
+    @Expose
     private Map<Gear, Integer> gearMap;
-    private int total;
+    @SerializedName("startDate")
+    @Expose
+    private Timestamp startDate;
+    @SerializedName("endDate")
+    @Expose
+    private Timestamp endDate;
+    @SerializedName("approveStatus")
+    @Expose
+    private boolean approveStatus;
+    @SerializedName("paymentStatus")
+    @Expose
+    private boolean paymentStatus;
+    @SerializedName("quantity")
+    @Expose
+    private int quantity;
+    @SerializedName("totalAmount")
+    @Expose
+    private int totalAmount;
+    @SerializedName("bookingPrice")
+    @Expose
+    private int bookingPrice;
+    @SerializedName("bookerName")
+    @Expose
+    private String bookerName;
+    @SerializedName("status")
+    @Expose
     private String status;
 
-    public Order(Campsite campsite, Map<Gear, Integer> gearMap, int total, String status) {
+    public Order() {
+    }
+
+    public Order(String orderId, Timestamp timeStamp, String booker, Campsite campsite, Map<Gear, Integer> gearMap,
+                 Timestamp startDate, Timestamp endDate, boolean approveStatus, boolean paymentStatus,
+                 int quantity, int totalAmount, int bookingPrice, String bookerName, String status) {
+        this.orderId = orderId;
+        this.timeStamp = timeStamp;
+        this.booker = booker;
         this.campsite = campsite;
         this.gearMap = gearMap;
-        this.total = total;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.approveStatus = approveStatus;
+        this.paymentStatus = paymentStatus;
+        this.quantity = quantity;
+        this.totalAmount = totalAmount;
+        this.bookingPrice = bookingPrice;
+        this.bookerName = bookerName;
         this.status = status;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public Timestamp getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Timestamp timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getBooker() {
+        return booker;
+    }
+
+    public void setBooker(String booker) {
+        this.booker = booker;
     }
 
     public Campsite getCampsite() {
         return campsite;
     }
 
+    public void setCampsite(Campsite campsite) {
+        this.campsite = campsite;
+    }
+
     public Map<Gear, Integer> getGearMap() {
         return gearMap;
     }
 
-    public int getTotal() {
-        return total;
+    public void setGearMap(Map<Gear, Integer> gearMap) {
+        this.gearMap = gearMap;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+
+    public Timestamp getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
+
+    public boolean isApproveStatus() {
+        return approveStatus;
+    }
+
+    public void setApproveStatus(boolean approveStatus) {
+        this.approveStatus = approveStatus;
+    }
+
+    public boolean isPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(boolean paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public int getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public int getBookingPrice() {
+        return bookingPrice;
+    }
+
+    public void setBookingPrice(int bookingPrice) {
+        this.bookingPrice = bookingPrice;
+    }
+
+    public String getBookerName() {
+        return bookerName;
+    }
+
+    public void setBookerName(String bookerName) {
+        this.bookerName = bookerName;
     }
 
     public String getStatus() {
         return status;
     }
-}
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return orderId != null && orderId.equals(order.orderId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId);
+    }
+}
