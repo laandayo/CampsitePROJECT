@@ -170,7 +170,7 @@
                             android:gravity="center_vertical">
 
                             <TextView
-                                android:text="👶 Trẻ em (nhỏ hơn 13 tuổi):"
+                                android:text="👶 Trẻ em:"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -233,7 +233,7 @@
                                 android:textColor="#666" />
 
                             <TextView
-                                android:text="• Trẻ em: 50% giá người lớn"
+                                android:text="• Trẻ em (nhỏ hơn 13 tuổi): 50% giá người lớn"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="11sp"
