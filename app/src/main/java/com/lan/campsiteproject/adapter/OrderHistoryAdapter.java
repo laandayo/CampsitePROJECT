@@ -25,10 +25,12 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
     private final Context context;
     private final List<Order> orderList;
+    private final OnOrderClickListener listener;
 
-    public OrderHistoryAdapter(Context context, List<Order> orderList) {
+    public OrderHistoryAdapter(Context context, List<Order> orderList, OnOrderClickListener listener) {
         this.context = context;
         this.orderList = orderList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -44,7 +46,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
         holder.txtCampName.setText(order.getCampsite().getCampName());
         holder.txtStatus.setText("Trạng thái: " + order.getStatus());
-        holder.txtTotal.setText("Tổng tiền: $" + order.getTotal());
+        holder.txtTotal.setText("Tổng tiền: $" + order.getTotalAmount());
 
         // Load campsite image
         String image = order.getCampsite().getCampImage();
@@ -77,6 +79,9 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         GearInOrderAdapter gearAdapter = new GearInOrderAdapter(context, gearEntries);
         holder.recyclerGear.setLayoutManager(new LinearLayoutManager(context));
         holder.recyclerGear.setAdapter(gearAdapter);
+
+        // Handle click to view details
+        holder.itemView.setOnClickListener(v -> listener.onOrderClick(order));
     }
 
     @Override
@@ -109,75 +114,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         }
     }
 
-    public static class GearInOrderAdapter extends RecyclerView.Adapter<GearInOrderAdapter.GearViewHolder> {
-
-        private final Context context;
-        private final List<GearEntry> gearEntries;
-
-        public GearInOrderAdapter(Context context, List<GearEntry> gearEntries) {
-            this.context = context;
-            this.gearEntries = gearEntries;
-        }
-
-        @NonNull
-        @Override
-        public GearViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.item_gear_in_order, parent, false);
-            return new GearViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull GearViewHolder holder, int position) {
-            GearEntry entry = gearEntries.get(position);
-            Gear gear = entry.gear;
-            int quantity = entry.quantity;
-
-            holder.gearName.setText(gear.getGearName());
-            holder.gearPrice.setText("Giá: $" + gear.getGearPrice());
-            holder.gearQuantity.setText("Số lượng: " + quantity);
-
-            try {
-                String image = gear.getGearImage();
-                if (!TextUtils.isEmpty(image)) {
-                    if (image.endsWith(".jpg") || image.endsWith(".png")) {
-                        image = image.substring(0, image.lastIndexOf('.'));
-                    }
-
-                    if (image.startsWith("http")) {
-                        Glide.with(context)
-                                .load(image)
-                                .placeholder(R.drawable.placeholder)
-                                .error(R.drawable.default_gear)
-                                .into(holder.imgGear);
-                    } else {
-                        int resId = context.getResources().getIdentifier(image.trim(), "drawable", context.getPackageName());
-                        if (resId != 0) holder.imgGear.setImageResource(resId);
-                        else holder.imgGear.setImageResource(R.drawable.default_gear);
-                    }
-                } else {
-                    holder.imgGear.setImageResource(R.drawable.default_gear);
-                }
-            } catch (Exception e) {
-                holder.imgGear.setImageResource(R.drawable.default_gear);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return gearEntries.size();
-        }
-
-        public static class GearViewHolder extends RecyclerView.ViewHolder {
-            ImageView imgGear;
-            TextView gearName, gearPrice, gearQuantity;
-
-            public GearViewHolder(@NonNull View itemView) {
-                super(itemView);
-                imgGear = itemView.findViewById(R.id.imgGearInOrder);
-                gearName = itemView.findViewById(R.id.txtGearNameInOrder);
-                gearPrice = itemView.findViewById(R.id.txtGearPriceInOrder);
-                gearQuantity = itemView.findViewById(R.id.txtGearQuantityInOrder);
-            }
-        }
+    public interface OnOrderClickListener {
+        void onOrderClick(Order order);
     }
 }

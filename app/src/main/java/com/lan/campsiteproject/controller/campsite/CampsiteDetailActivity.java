@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.lan.campsiteproject.R;
+import com.lan.campsiteproject.map.OpenMapClickListener;
 import com.lan.campsiteproject.model.Campsite;
 
 public class CampsiteDetailActivity extends AppCompatActivity {
@@ -25,6 +26,7 @@ public class CampsiteDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_campsite_detail);
+
 
         imageView = findViewById(R.id.imgDetail);
         name = findViewById(R.id.txtDetailName);
@@ -97,6 +99,10 @@ public class CampsiteDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }
+        Button btnOther = findViewById(R.id.btnViewMap);
+        btnOther.setOnClickListener(new OpenMapClickListener(this));
+
     }
+
 
 }

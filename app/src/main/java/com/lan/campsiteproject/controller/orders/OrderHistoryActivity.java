@@ -1,5 +1,6 @@
 package com.lan.campsiteproject.controller.orders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -26,12 +27,32 @@ public class OrderHistoryActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerOrderHistory);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<Order> orderList = OrderManager.getInstance().getOrderList();
-        if (orderList.isEmpty()) {
-            Toast.makeText(this, "Chưa có đơn hàng nào!", Toast.LENGTH_SHORT).show();
+        // Assume bookerId is passed via Intent or retrieved from authentication
+        String bookerId = getIntent().getStringExtra("bookerId");
+        if (bookerId == null) {
+            Toast.makeText(this, "Invalid user", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
-        adapter = new OrderHistoryAdapter(this, orderList);
-        recyclerView.setAdapter(adapter);
+        OrderManager.getInstance().fetchOrders(bookerId, new OrderManager.OrderListCallback() {
+            @Override
+            public void onSuccess(List<Order> orders) {
+                if (orders.isEmpty()) {
+                    Toast.makeText(OrderHistoryActivity.this, "Chưa có đơn hàng nào!", Toast.LENGTH_SHORT).show();
+                }
+                adapter = new OrderHistoryAdapter(OrderHistoryActivity.this, orders, order -> {
+                    Intent intent = new Intent(OrderHistoryActivity.this, OrderDetailActivity.class);
+                    intent.putExtra("order", order);
+                    startActivity(intent);
+                });
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(OrderHistoryActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
