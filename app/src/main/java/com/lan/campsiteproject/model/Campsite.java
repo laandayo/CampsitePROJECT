@@ -1,5 +1,6 @@
 package com.lan.campsiteproject.model;
 
+import com.google.firebase.firestore.PropertyName;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -62,90 +63,112 @@ public class Campsite implements Serializable {
         this.campsiteOwnerName = campsiteOwnerName;
     }
 
+    @PropertyName("campId")
     public String getCampId() {
         return campId;
     }
 
+    @PropertyName("campId")
     public void setCampId(String campId) {
         this.campId = campId;
     }
 
+    @PropertyName("campPrice")
     public int getCampPrice() {
         return campPrice;
     }
 
+    @PropertyName("campPrice")
     public void setCampPrice(int campPrice) {
         this.campPrice = campPrice;
     }
 
+    @PropertyName("campOwner")
     public String getCampOwner() {
         return campOwner;
     }
 
+    @PropertyName("campOwner")
     public void setCampOwner(String campOwner) {
         this.campOwner = campOwner;
     }
 
+    @PropertyName("campAddress")
     public String getCampAddress() {
         return campAddress;
     }
 
+    @PropertyName("campAddress")
     public void setCampAddress(String campAddress) {
         this.campAddress = campAddress;
     }
 
+    @PropertyName("campName")
     public String getCampName() {
         return campName;
     }
 
+    @PropertyName("campName")
     public void setCampName(String campName) {
         this.campName = campName;
     }
 
+    @PropertyName("campDescription")
     public String getCampDescription() {
         return campDescription;
     }
 
+    @PropertyName("campDescription")
     public void setCampDescription(String campDescription) {
         this.campDescription = campDescription;
     }
 
+    @PropertyName("campImage")
     public String getCampImage() {
         return campImage;
     }
 
+    @PropertyName("campImage")
     public void setCampImage(String campImage) {
         this.campImage = campImage;
     }
 
+    @PropertyName("campStatus")
     public boolean isCampStatus() {
         return campStatus;
     }
 
+    @PropertyName("campStatus")
     public void setCampStatus(boolean campStatus) {
         this.campStatus = campStatus;
     }
 
+    @PropertyName("quantity")
     public int getQuantity() {
         return quantity;
     }
 
+    @PropertyName("quantity")
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
+    @PropertyName("campsiteOwnerName")
     public String getCampsiteOwnerName() {
         return campsiteOwnerName;
     }
 
+    @PropertyName("campsiteOwnerName")
     public void setCampsiteOwnerName(String campsiteOwnerName) {
         this.campsiteOwnerName = campsiteOwnerName;
     }
 
+    @PropertyName("limite")
     public int getLimite() {
         return limite;
     }
 
+    @PropertyName("limite")
     public void setLimite(int limite) {
         this.limite = limite;
     }

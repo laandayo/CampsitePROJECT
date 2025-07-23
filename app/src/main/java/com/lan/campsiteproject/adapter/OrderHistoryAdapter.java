@@ -2,6 +2,7 @@ package com.lan.campsiteproject.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.model.Gear;
 import com.lan.campsiteproject.model.Order;
@@ -26,11 +28,14 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     private final Context context;
     private final List<Order> orderList;
     private final OnOrderClickListener listener;
+    private final FirebaseFirestore db;
+    private static final String TAG = "OrderHistoryAdapter";
 
     public OrderHistoryAdapter(Context context, List<Order> orderList, OnOrderClickListener listener) {
         this.context = context;
         this.orderList = orderList;
         this.listener = listener;
+        this.db = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -70,15 +75,48 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             holder.imgCamp.setImageResource(R.drawable.default_camp);
         }
 
-        // Set up nested RecyclerView for gear
+        // Fetch gear details from Firestore
         List<GearEntry> gearEntries = new ArrayList<>();
-        for (Map.Entry<Gear, Integer> entry : order.getGearMap().entrySet()) {
-            gearEntries.add(new GearEntry(entry.getKey(), entry.getValue()));
-        }
+        Map<String, Integer> gearMap = order.getGearMap();
+        int totalGears = gearMap.size();
+        int[] fetchCount = {0}; // Counter for async calls
 
-        GearInOrderAdapter gearAdapter = new GearInOrderAdapter(context, gearEntries);
-        holder.recyclerGear.setLayoutManager(new LinearLayoutManager(context));
-        holder.recyclerGear.setAdapter(gearAdapter);
+        if (gearMap.isEmpty()) {
+            // If no gears, set adapter immediately
+            GearInOrderAdapter gearAdapter = new GearInOrderAdapter(context, gearEntries);
+            holder.recyclerGear.setLayoutManager(new LinearLayoutManager(context));
+            holder.recyclerGear.setAdapter(gearAdapter);
+        } else {
+            for (Map.Entry<String, Integer> entry : gearMap.entrySet()) {
+                String gearId = entry.getKey();
+                int quantity = entry.getValue();
+
+                db.collection("gears").document(gearId).get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            Gear gear = documentSnapshot.toObject(Gear.class);
+                            if (gear != null) {
+                                gearEntries.add(new GearEntry(gear, quantity));
+                            }
+                            fetchCount[0]++;
+                            if (fetchCount[0] == totalGears) {
+                                // All gears fetched, set adapter
+                                GearInOrderAdapter gearAdapter = new GearInOrderAdapter(context, gearEntries);
+                                holder.recyclerGear.setLayoutManager(new LinearLayoutManager(context));
+                                holder.recyclerGear.setAdapter(gearAdapter);
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Failed to fetch gear: " + gearId + ", error: " + e.getMessage());
+                            fetchCount[0]++;
+                            if (fetchCount[0] == totalGears) {
+                                // Even if some fetches fail, set adapter with available data
+                                GearInOrderAdapter gearAdapter = new GearInOrderAdapter(context, gearEntries);
+                                holder.recyclerGear.setLayoutManager(new LinearLayoutManager(context));
+                                holder.recyclerGear.setAdapter(gearAdapter);
+                            }
+                        });
+            }
+        }
 
         // Handle click to view details
         holder.itemView.setOnClickListener(v -> listener.onOrderClick(order));
@@ -111,6 +149,14 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         public GearEntry(Gear gear, int quantity) {
             this.gear = gear;
             this.quantity = quantity;
+        }
+
+        public Gear getGear() {
+            return gear;
+        }
+
+        public int getQuantity() {
+            return quantity;
         }
     }
 

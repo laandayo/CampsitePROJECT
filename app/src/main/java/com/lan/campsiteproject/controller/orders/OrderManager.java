@@ -1,14 +1,14 @@
 package com.lan.campsiteproject.controller.orders;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lan.campsiteproject.model.Campsite;
 import com.lan.campsiteproject.model.Gear;
 import com.lan.campsiteproject.model.Order;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,80 +19,95 @@ import java.util.UUID;
 public class OrderManager {
     private static OrderManager instance;
     private final List<Order> orderList;
-    private final DatabaseReference databaseReference;
+    private final FirebaseFirestore db;
+    private final Context context;
+    private static final String TAG = "OrderManager";
 
-    private OrderManager() {
+    private OrderManager(Context context) {
+        this.context = context.getApplicationContext();
         orderList = new ArrayList<>();
-        databaseReference = FirebaseDatabase.getInstance().getReference("orders");
+        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore.setLoggingEnabled(true); // Enable Firestore debug logging
     }
 
-    public static OrderManager getInstance() {
+    public static OrderManager getInstance(Context context) {
         if (instance == null) {
-            instance = new OrderManager();
+            instance = new OrderManager(context);
         }
         return instance;
     }
 
-    // Add a new order to Firebase
-    public void addOrder(Campsite campsite, Map<Gear, Integer> gearMap, int total, String status,
+    public void addOrder(Campsite campsite, Map<String, Integer> gearMap, int total, String status,
                          String booker, Timestamp startDate, Timestamp endDate, boolean approveStatus,
                          boolean paymentStatus, int quantity, int bookingPrice, String bookerName,
                          OrderCallback callback) {
+        Log.d(TAG, "Starting addOrder for booker: " + booker);
+
+        // Check network connectivity
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork == null || !activeNetwork.isConnected()) {
+            Log.e(TAG, "No network connection");
+            callback.onFailure("No network connection");
+            return;
+        }
+
         String orderId = UUID.randomUUID().toString();
         Order order = new Order(orderId, new Timestamp(System.currentTimeMillis()), booker, campsite,
                 new HashMap<>(gearMap), startDate, endDate, approveStatus, paymentStatus,
                 quantity, total, bookingPrice, bookerName, status);
 
-        databaseReference.child(orderId).setValue(order, (error, ref) -> {
-            if (error == null) {
-                orderList.add(order);
-                callback.onSuccess();
-            } else {
-                callback.onFailure(error.getMessage());
-            }
-        });
+        Log.d(TAG, "Attempting to save order: " + orderId);
+        db.collection("orders").document(orderId).set(order)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Order saved successfully: " + orderId);
+                    orderList.add(order);
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to save order: " + e.getMessage(), e);
+                    callback.onFailure(e.getMessage());
+                });
+        Log.d(TAG, "Called set for order: " + orderId);
     }
 
-    // Fetch all orders from Firebase
     public void fetchOrders(String bookerId, OrderListCallback callback) {
-        databaseReference.orderByChild("booker").equalTo(bookerId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        orderList.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Order order = snapshot.getValue(Order.class);
-                            if (order != null) {
-                                orderList.add(order);
-                            }
-                        }
-                        callback.onSuccess(orderList);
+        Log.d(TAG, "Fetching orders for booker: " + bookerId);
+        db.collection("orders").whereEqualTo("booker", bookerId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    orderList.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Order order = document.toObject(Order.class);
+                        orderList.add(order);
                     }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        callback.onFailure(databaseError.getMessage());
-                    }
+                    Log.d(TAG, "Fetched " + orderList.size() + " orders for booker: " + bookerId);
+                    callback.onSuccess(orderList);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch orders: " + e.getMessage(), e);
+                    callback.onFailure(e.getMessage());
                 });
     }
 
-    // Update an existing order
-    public void updateOrder(String orderId, Campsite campsite, Map<Gear, Integer> gearMap,
+    public void updateOrder(String orderId, Campsite campsite, Map<String, Integer> gearMap,
                             Timestamp startDate, Timestamp endDate, int quantity, int total,
                             OrderCallback callback) {
+        Log.d(TAG, "Updating order: " + orderId);
         Order existingOrder = orderList.stream()
                 .filter(order -> order.getOrderId().equals(orderId))
                 .findFirst()
                 .orElse(null);
 
         if (existingOrder == null) {
+            Log.e(TAG, "Order not found: " + orderId);
             callback.onFailure("Order not found");
             return;
         }
 
-        // Check if order can be edited
         long currentTime = System.currentTimeMillis();
         if (existingOrder.getEndDate().getTime() < currentTime) {
+            Log.e(TAG, "Cannot edit completed order: " + orderId);
             callback.onFailure("Cannot edit completed order");
             return;
         }
@@ -104,46 +119,55 @@ public class OrderManager {
         existingOrder.setQuantity(quantity);
         existingOrder.setTotalAmount(total);
 
-        databaseReference.child(orderId).setValue(existingOrder, (error, ref) -> {
-            if (error == null) {
-                callback.onSuccess();
-            } else {
-                callback.onFailure(error.getMessage());
-            }
-        });
+        Log.d(TAG, "Attempting to update order: " + orderId);
+        db.collection("orders").document(orderId).set(existingOrder)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Order updated successfully: " + orderId);
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to update order: " + e.getMessage(), e);
+                    callback.onFailure(e.getMessage());
+                });
     }
 
-    // Cancel an order
     public void cancelOrder(String orderId, OrderCallback callback) {
+        Log.d(TAG, "Canceling order: " + orderId);
         Order existingOrder = orderList.stream()
                 .filter(order -> order.getOrderId().equals(orderId))
                 .findFirst()
                 .orElse(null);
 
         if (existingOrder == null) {
+            Log.e(TAG, "Order not found: " + orderId);
             callback.onFailure("Order not found");
             return;
         }
 
         long currentTime = System.currentTimeMillis();
         if (existingOrder.getEndDate().getTime() < currentTime) {
+            Log.e(TAG, "Cannot cancel completed order: " + orderId);
             callback.onFailure("Cannot cancel completed order");
             return;
         }
         if (existingOrder.getStartDate().getTime() <= currentTime &&
                 currentTime <= existingOrder.getEndDate().getTime()) {
+            Log.e(TAG, "Cannot cancel order during rental period: " + orderId);
             callback.onFailure("Cannot cancel order during rental period");
             return;
         }
 
         existingOrder.setStatus("Cancelled");
-        databaseReference.child(orderId).setValue(existingOrder, (error, ref) -> {
-            if (error == null) {
-                callback.onSuccess();
-            } else {
-                callback.onFailure(error.getMessage());
-            }
-        });
+        Log.d(TAG, "Attempting to cancel order: " + orderId);
+        db.collection("orders").document(orderId).set(existingOrder)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Order cancelled successfully: " + orderId);
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to cancel order: " + e.getMessage(), e);
+                    callback.onFailure(e.getMessage());
+                });
     }
 
     public List<Order> getOrderList() {
