@@ -21,6 +21,7 @@ import com.lan.campsiteproject.controller.orders.OrderHistoryActivity;
 import com.lan.campsiteproject.controller.orders.OrderManager;
 import com.lan.campsiteproject.model.Campsite;
 import com.lan.campsiteproject.model.Gear;
+import com.lan.campsiteproject.payment.VNPay;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -405,6 +406,128 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void handlePayNow() {
-        Toast.makeText(this, "Chức năng Paynow đang được phát triển", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "handlePayNow() called");
+
+        Campsite campsite = cartManager.getSelectedCampsite();
+        if (campsite == null) {
+            Toast.makeText(this, "Chưa chọn Campsite!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            double totalAmount = priceCalculator.getGrandTotal();
+            if (totalAmount <= 0) {
+                Toast.makeText(this, "Tổng tiền không hợp lệ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Tạo mã đơn hàng tạm thời (dùng timestamp)
+            String orderId = "ORDER" + System.currentTimeMillis();
+
+            // Lấy URL thanh toán VNPay
+            String paymentUrl = VNPay.getPaymentUrl(orderId, (long) totalAmount);
+
+            // Mở trình duyệt hoặc WebView để thanh toán
+            Intent intent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(paymentUrl));
+            startActivity(intent);
+
+            // Ghi lại orderId tạm để xử lý khi quay lại
+            getSharedPreferences("VNPay", MODE_PRIVATE)
+                    .edit()
+                    .putString("pendingOrderId", orderId)
+                    .putLong("pendingTotal", (long) totalAmount)
+                    .apply();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi tạo URL thanh toán: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Cập nhật intent mới để xử lý
+
+        android.net.Uri data = intent.getData();
+        if (data != null && data.toString().startsWith("myapp://vnpay_return")) {
+            String responseCode = data.getQueryParameter("vnp_ResponseCode");
+            if ("00".equals(responseCode)) {
+                saveOrderAfterPaynow(); // Thành công
+            } else {
+                Toast.makeText(this, "Thanh toán thất bại hoặc bị huỷ", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void saveOrderAfterPaynow() {
+        Campsite campsite = cartManager.getSelectedCampsite();
+        Map<Gear, Integer> originalGearMap = cartManager.getGearMap();
+
+        if (campsite == null) {
+            Toast.makeText(this, "Lỗi: Không có campsite được chọn!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double totalAmount = priceCalculator.getGrandTotal();
+        int adults = priceCalculator.getNumberOfAdults();
+        int children = priceCalculator.getNumberOfChildren();
+        int numberOfDays = priceCalculator.getNumberOfDays();
+
+        Calendar startCal = priceCalculator.getStartDate();
+        Calendar endCal = priceCalculator.getEndDate();
+
+        if (startCal == null || endCal == null) {
+            Toast.makeText(this, "Ngày thuê không hợp lệ!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Timestamp startDate = new Timestamp(startCal.getTimeInMillis());
+        Timestamp endDate = new Timestamp(endCal.getTimeInMillis());
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Chưa đăng nhập!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String bookerId = user.getUid();
+        String bookerName = user.getDisplayName() != null ? user.getDisplayName() : "Unknown";
+
+        // Convert Gear map
+        Map<String, Integer> gearMap = new HashMap<>();
+        for (Map.Entry<Gear, Integer> entry : originalGearMap.entrySet()) {
+            gearMap.put(entry.getKey().getGearId(), entry.getValue());
+        }
+
+        OrderManager.getInstance(this).addOrder(
+                campsite,
+                gearMap,
+                (int) totalAmount,
+                "Đã thanh toán",
+                bookerId,
+                startDate,
+                endDate,
+                true,  // approve
+                true,  // payment
+                adults + children,
+                campsite.getCampPrice(),
+                bookerName,
+                new OrderManager.OrderCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(CartActivity.this, "Thanh toán thành công!", Toast.LENGTH_LONG).show();
+                        cartManager.clearCart(CartActivity.this);
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        Toast.makeText(CartActivity.this, "Lỗi lưu đơn: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+
+
+
 }

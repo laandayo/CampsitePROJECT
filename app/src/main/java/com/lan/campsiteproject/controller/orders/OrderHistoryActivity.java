@@ -30,6 +30,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
         // Assume bookerId is passed via Intent or retrieved from authentication
         String bookerId = getIntent().getStringExtra("bookerId");
+        Toast.makeText(this, "BookerId: " + bookerId, Toast.LENGTH_LONG).show();
         if (bookerId == null) {
             Toast.makeText(this, "Invalid user", Toast.LENGTH_SHORT).show();
             finish();

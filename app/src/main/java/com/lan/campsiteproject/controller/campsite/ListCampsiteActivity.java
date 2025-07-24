@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -175,7 +176,14 @@ public class ListCampsiteActivity extends AppCompatActivity {
             });
 
             popupView.findViewById(R.id.btnOrder).setOnClickListener(btn -> {
-                startActivity(new Intent(this, OrderHistoryActivity.class));
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    Intent intent = new Intent(this, OrderHistoryActivity.class);
+                    intent.putExtra("bookerId", user.getUid());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Bạn cần đăng nhập để xem lịch sử đơn hàng", Toast.LENGTH_SHORT).show();
+                }
                 popupWindow.dismiss();
             });
 

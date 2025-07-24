@@ -4,10 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lan.campsiteproject.model.Campsite;
-import com.lan.campsiteproject.model.Gear;
 import com.lan.campsiteproject.model.Order;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class OrderManager {
         this.context = context.getApplicationContext();
         orderList = new ArrayList<>();
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestore.setLoggingEnabled(true); // Enable Firestore debug logging
+        FirebaseFirestore.setLoggingEnabled(true);
     }
 
     public static OrderManager getInstance(Context context) {
@@ -43,7 +43,6 @@ public class OrderManager {
                          OrderCallback callback) {
         Log.d(TAG, "Starting addOrder for booker: " + booker);
 
-        // Check network connectivity
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork == null || !activeNetwork.isConnected()) {
@@ -53,14 +52,29 @@ public class OrderManager {
         }
 
         String orderId = UUID.randomUUID().toString();
-        Order order = new Order(orderId, new Timestamp(System.currentTimeMillis()), booker, campsite,
-                new HashMap<>(gearMap), startDate, endDate, approveStatus, paymentStatus,
-                quantity, total, bookingPrice, bookerName, status);
+        Map<String, Object> orderData = new HashMap<>();
+        orderData.put("orderId", orderId);
+        orderData.put("createdDate", FieldValue.serverTimestamp());
+        orderData.put("booker", booker);
+        orderData.put("campsite", campsite);
+        orderData.put("gearMap", new HashMap<>(gearMap));
+        orderData.put("startDate", startDate);
+        orderData.put("endDate", endDate);
+        orderData.put("approveStatus", approveStatus);
+        orderData.put("paymentStatus", paymentStatus);
+        orderData.put("quantity", quantity);
+        orderData.put("totalAmount", total);
+        orderData.put("bookingPrice", bookingPrice);
+        orderData.put("bookerName", bookerName);
+        orderData.put("status", status);
 
         Log.d(TAG, "Attempting to save order: " + orderId);
-        db.collection("orders").document(orderId).set(order)
+        db.collection("orders").document(orderId).set(orderData)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Order saved successfully: " + orderId);
+                    Order order = new Order(orderId, null, booker, campsite, new HashMap<>(gearMap),
+                            startDate, endDate, approveStatus, paymentStatus, quantity, total,
+                            bookingPrice, bookerName, status);
                     orderList.add(order);
                     callback.onSuccess();
                 })
@@ -68,7 +82,6 @@ public class OrderManager {
                     Log.e(TAG, "Failed to save order: " + e.getMessage(), e);
                     callback.onFailure(e.getMessage());
                 });
-        Log.d(TAG, "Called set for order: " + orderId);
     }
 
     public void fetchOrders(String bookerId, OrderListCallback callback) {
