@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -31,44 +30,37 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".controller.user.RegisterActivity"
-            android:exported="true"/>
-        <activity
-            android:name=".test.test1st"
-            android:exported="true" />
-        <activity
-            android:name=".controller.campsite.CampsiteDetailActivity"
-            android:exported="false" />
 
-<!--        map-->
+        <activity android:name=".controller.user.RegisterActivity" android:exported="true"/>
+        <activity android:name=".test.test1st" android:exported="true" />
+        <activity android:name=".controller.campsite.CampsiteDetailActivity" android:exported="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBE8J3XrpWDUEkEL8CMLAGC5KjOHB86tpE" />
-        <activity android:name=".map.MapActivity" android:exported="true"  />
-        <activity android:name=".map.ButtonActivity"
+
+        <activity android:name=".map.MapActivity" android:exported="true" />
+        <activity android:name=".map.ButtonActivity" android:exported="true" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".controller.campsite.CartActivity" android:exported="false" />
+        <activity android:name=".controller.campsite.GearListActivity" android:exported="false" />
+        <activity android:name=".controller.orders.OrderHistoryActivity" android:exported="true" />
+        <activity android:name=".controller.user.ChatListActivity" android:exported="true" />
+        <activity android:name=".controller.user.ChatActivity" android:exported="true" />
+        <activity android:name=".controller.user.ProfileActivity" android:exported="true" />
+        <activity
+            android:name=".controller.user.ChangePasswordActivity"
             android:exported="true" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".controller.campsite.CartActivity"
-            android:exported="false" />
-        <activity
-            android:name=".controller.campsite.GearListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".controller.orders.OrderHistoryActivity"
-            android:exported="true" />
-        <activity
-            android:name=".controller.user.ChatListActivity"
-            android:exported="true" />
-        <activity
-            android:name=".controller.user.ChatActivity"
-            android:exported="true" />
-        <activity
-            android:name=".controller.user.ProfileActivity"
-            android:exported="true" />
+
+        <!-- Firebase Messaging Service -->
+        <service
+            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:exported="true"
+            tools:replace="android:exported">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
