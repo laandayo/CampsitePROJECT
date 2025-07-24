@@ -35,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.adapter.CampsiteAdapter;
+import com.lan.campsiteproject.aichat.AiChatActivity;
 import com.lan.campsiteproject.controller.SettingsActivity;
 import com.lan.campsiteproject.controller.orders.OrderHistoryActivity;
 import com.lan.campsiteproject.controller.user.ChatListActivity;
@@ -112,6 +113,12 @@ public class ListCampsiteActivity extends AppCompatActivity {
 
         // Setup cart button
         btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
+
+        Button aiChatButton = findViewById(R.id.aiChat);
+        aiChatButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, AiChatActivity.class);
+            startActivity(intent);
+        });
 
         // Setup filter button
         btnFilter.setOnClickListener(v -> showFilterBottomSheet());
@@ -543,5 +550,6 @@ public class ListCampsiteActivity extends AppCompatActivity {
             }
         }
     }
+
 
 }

@@ -60,10 +60,10 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.firebase:firebase-firestore:24.10.3")
-// Sử dụng phiên bản mới nhất
     implementation("com.google.android.gms:play-services-base:18.5.0")
-// Thêm nếu cần
     implementation("com.google.firebase:firebase-core:21.1.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.json:json:20240303")
 // Nếu muốn SwipeRefreshLayout:
 // implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 // Nếu muốn Material Components:

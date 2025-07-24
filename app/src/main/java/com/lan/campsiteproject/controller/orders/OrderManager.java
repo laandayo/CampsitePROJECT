@@ -43,11 +43,39 @@ public class OrderManager {
                          OrderCallback callback) {
         Log.d(TAG, "Starting addOrder for booker: " + booker);
 
+        // Kiểm tra kết nối mạng
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork == null || !activeNetwork.isConnected()) {
             Log.e(TAG, "No network connection");
-            callback.onFailure("No network connection");
+            callback.onFailure("Không có kết nối mạng");
+            return;
+        }
+
+        // Kiểm tra dữ liệu đầu vào
+        if (campsite == null) {
+            Log.e(TAG, "Campsite is null");
+            callback.onFailure("Campsite không hợp lệ");
+            return;
+        }
+        if (booker == null || booker.isEmpty()) {
+            Log.e(TAG, "Booker ID is null or empty");
+            callback.onFailure("ID người đặt không hợp lệ");
+            return;
+        }
+        if (startDate == null || endDate == null) {
+            Log.e(TAG, "Start or end date is null");
+            callback.onFailure("Ngày bắt đầu hoặc kết thúc không hợp lệ");
+            return;
+        }
+        if (total <= 0) {
+            Log.e(TAG, "Total amount is invalid: " + total);
+            callback.onFailure("Tổng tiền không hợp lệ");
+            return;
+        }
+        if (quantity <= 0) {
+            Log.e(TAG, "Quantity is invalid: " + quantity);
+            callback.onFailure("Số lượng không hợp lệ");
             return;
         }
 
@@ -68,7 +96,7 @@ public class OrderManager {
         orderData.put("bookerName", bookerName);
         orderData.put("status", status);
 
-        Log.d(TAG, "Attempting to save order: " + orderId);
+        Log.d(TAG, "Attempting to save order: " + orderId + ", data: " + orderData.toString());
         db.collection("orders").document(orderId).set(orderData)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Order saved successfully: " + orderId);
@@ -80,7 +108,7 @@ public class OrderManager {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Failed to save order: " + e.getMessage(), e);
-                    callback.onFailure(e.getMessage());
+                    callback.onFailure("Lỗi Firestore: " + e.getMessage());
                 });
     }
 

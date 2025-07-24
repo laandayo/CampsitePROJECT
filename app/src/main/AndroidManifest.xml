@@ -29,9 +29,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="campsiteproject" android:host="vnpay_return" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="myapp"
+                    android:host="vnpay_return" />
+
             </intent-filter>
         </activity>
+        <activity android:name=".aichat.AiChatActivity" />
         <activity
             android:name=".controller.user.RegisterActivity"
             android:exported="true"/>
