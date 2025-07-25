@@ -1,10 +1,8 @@
 package com.lan.campsiteproject.controller;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,31 +12,49 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.lan.campsiteproject.R;
+import com.lan.campsiteproject.controller.user.ChangePasswordActivity;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileSettingsFragment extends Fragment {
+
     private EditText firstName, lastName, phoneNumber, email;
     private Button btnUpdate, btnChangePassword;
+    private ImageView avatarImageView;
+
     private FirebaseFirestore db;
     private FirebaseUser user;
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private ImageView avatarImageView;
+
+    private final ActivityResultLauncher<Intent> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    if (imageUri != null) {
+                        avatarImageView.setImageURI(imageUri);
+                        uploadAvatarToFirebase(imageUri);
+                    }
+                }
+            });
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_profile, container, false);
 
         firstName = view.findViewById(R.id.firstName);
@@ -49,23 +65,25 @@ public class ProfileSettingsFragment extends Fragment {
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
         avatarImageView = view.findViewById(R.id.avatarImageView);
 
+        email.setEnabled(false);
+        email.setFocusable(false);
+
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user == null) {
-            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Người dùng chưa đăng nhập", Toast.LENGTH_SHORT).show();
             return view;
         }
-
         email.setText(user.getEmail());
-        email.setEnabled(false);
-        email.setFocusable(false);
 
         loadUserProfile();
 
         btnUpdate.setOnClickListener(v -> updateProfile());
+
         btnChangePassword.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Change password feature not implemented", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
+            startActivity(intent);
         });
 
         avatarImageView.setOnClickListener(v -> openImagePicker());
@@ -74,24 +92,27 @@ public class ProfileSettingsFragment extends Fragment {
     }
 
     private void openImagePicker() {
-        Intent intent = new Intent();
+        Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Avatar"), PICK_IMAGE_REQUEST);
+        imagePickerLauncher.launch(Intent.createChooser(intent, "Chọn ảnh đại diện"));
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == getActivity().RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                avatarImageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                Toast.makeText(getContext(), "Failed to load image", Toast.LENGTH_SHORT).show();
-            }
-        }
+    private void uploadAvatarToFirebase(Uri imageUri) {
+        StorageReference ref = FirebaseStorage.getInstance()
+                .getReference("avatars/" + user.getUid() + ".jpg");
+
+        ref.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageUrl = uri.toString();
+                    db.collection("users").document(user.getUid())
+                            .update("avatarUrl", imageUrl)
+                            .addOnSuccessListener(aVoid ->
+                                    Toast.makeText(getContext(), "Cập nhật ảnh đại diện thành công", Toast.LENGTH_SHORT).show()
+                            );
+                }))
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 
     private void loadUserProfile() {
@@ -101,13 +122,21 @@ public class ProfileSettingsFragment extends Fragment {
                 firstName.setText(document.getString("firstName") != null ? document.getString("firstName") : "");
                 lastName.setText(document.getString("lastName") != null ? document.getString("lastName") : "");
                 phoneNumber.setText(document.getString("phoneNumber") != null ? document.getString("phoneNumber") : "");
+
+                String avatarUrl = document.getString("avatarUrl");
+                if (!TextUtils.isEmpty(avatarUrl)) {
+                    Glide.with(this)
+                            .load(avatarUrl)
+                            .placeholder(R.drawable.avatar)
+                            .into(avatarImageView);
+                }
             } else {
                 firstName.setText("");
                 lastName.setText("");
                 phoneNumber.setText("");
             }
         }).addOnFailureListener(e -> {
-            Toast.makeText(getContext(), "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Lỗi tải thông tin: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             firstName.setText("");
             lastName.setText("");
             phoneNumber.setText("");
@@ -120,7 +149,7 @@ public class ProfileSettingsFragment extends Fragment {
         String phone = phoneNumber.getText().toString().trim();
 
         if (TextUtils.isEmpty(fName) || TextUtils.isEmpty(lName)) {
-            Toast.makeText(getContext(), "First and last name cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Họ và tên không được để trống", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -131,7 +160,11 @@ public class ProfileSettingsFragment extends Fragment {
 
         db.collection("users").document(user.getUid())
                 .set(updates, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(aVoid ->
+                        Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show()
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 }
