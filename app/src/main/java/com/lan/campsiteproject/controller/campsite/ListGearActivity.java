@@ -31,6 +31,7 @@ public class ListGearActivity extends AppCompatActivity {
         gearList = new ArrayList<>();
         gearAdapter = new GearAdapter(this, gearList, gear -> {
             CartManager.getInstance().addGear(gear,ListGearActivity.this );
+            CartManager.getInstance().saveGearMap(ListGearActivity.this);
             Toast.makeText(this, "Gear added to cart", Toast.LENGTH_SHORT).show();
         });
 

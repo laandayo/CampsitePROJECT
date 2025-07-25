@@ -208,4 +208,26 @@ public class CartManager {
         numPeople = prefs.getInt(KEY_NUM_PEOPLE, 1);
         Log.d("CartManager", "Restored numPeople: " + numPeople);
     }
+    public void saveGearMap(Context context) {
+        if (context == null) {
+            Log.e("CartManager", "Context is null in saveGearMap");
+            return;
+        }
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+
+        if (gearMap != null && !gearMap.isEmpty()) {
+            String gearMapJson = gson.toJson(gearMap);
+            editor.putString(KEY_GEAR_MAP, gearMapJson);
+            Log.d("CartManager", "Saving gearMapJson: " + gearMapJson);
+        } else {
+            editor.remove(KEY_GEAR_MAP);
+            Log.d("CartManager", "GearMap is empty, removing from SharedPreferences");
+        }
+
+        editor.apply();
+        Log.d("CartManager", "GearMap saved to SharedPreferences");
+    }
+
 }

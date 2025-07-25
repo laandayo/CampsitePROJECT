@@ -200,7 +200,7 @@
                         android:id="@+id/txtCampPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$37000"
+                        android:text="370.000vnđ"
                         android:textSize="10sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorPrimary" />

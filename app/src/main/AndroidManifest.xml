@@ -29,8 +29,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <data
+                    android:scheme="myapp"
+                    android:host="vnpay_return" />
+
             </intent-filter>
         </activity>
+        <activity android:name=".aichat.AiChatActivity" />
         <activity
             android:name=".controller.user.RegisterActivity"
             android:exported="true"/>
@@ -46,6 +55,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBE8J3XrpWDUEkEL8CMLAGC5KjOHB86tpE" />
         <activity android:name=".map.MapActivity" android:exported="true"  />
+
         <activity android:name=".map.ButtonActivity"
             android:exported="true" />
         <activity
@@ -70,6 +80,23 @@
             android:name=".controller.SettingsActivity"
             android:exported="true" />
         <activity android:name=".controller.campsite.FilterCampsiteActivity" />
+
+        <!-- Đã thêm từ file 2 -->
+        <activity
+            android:name=".controller.ProfileSettingsFragment"
+            android:exported="true"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".controller.user.ChangePasswordActivity"
+            android:exported="true" />
+
+        <!-- Firebase Messaging Service -->
+        <service
+            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:exported="true"
+            tools:replace="android:exported">
+        </service>
+
 
     </application>
 </manifest>

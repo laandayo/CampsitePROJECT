@@ -21,11 +21,13 @@ import com.lan.campsiteproject.controller.orders.OrderHistoryActivity;
 import com.lan.campsiteproject.controller.orders.OrderManager;
 import com.lan.campsiteproject.model.Campsite;
 import com.lan.campsiteproject.model.Gear;
+import com.lan.campsiteproject.payment.VNPay;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -55,21 +57,21 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        // Initialize managers
+        // Khởi tạo các manager
         cartManager = CartManager.getInstance();
         cartManager.restoreFromPreferences(this); // Khôi phục dữ liệu giỏ hàng
         priceCalculator = new CartPriceCalculator(this, cartManager);
 
-        // Initialize UI components in correct order
+        // Khởi tạo các thành phần giao diện theo đúng thứ tự
         initializeViews();
         setupRecyclerView();
-        setupPriceCalculator();  // Setup price calculator first
-        setupCampsiteInfo();     // Then setup campsite info
+        setupPriceCalculator();  // Thiết lập bộ tính giá trước
+        setupCampsiteInfo();     // Sau đó thiết lập thông tin campsite
         setupActionButtons();
     }
 
     private void initializeViews() {
-        // Main layout components
+        // Thành phần giao diện chính
         layoutCampsiteCard = findViewById(R.id.layoutCampsiteCard);
         txtEmptyMessage = findViewById(R.id.txtEmptyCartMessage);
         imgCamp = findViewById(R.id.imgCartCampsite);
@@ -81,7 +83,7 @@ public class CartActivity extends AppCompatActivity {
         btnCheckout = findViewById(R.id.btnCheckout);
         btnCancelOrder = findViewById(R.id.btnCancelOrder);
 
-        // Price calculator components
+        // Thành phần bộ tính giá
         edtNumAdults = findViewById(R.id.edtNumAdults);
         edtNumChildren = findViewById(R.id.edtNumChildren);
         btnIncreaseAdults = findViewById(R.id.btnIncreaseAdults);
@@ -102,7 +104,7 @@ public class CartActivity extends AppCompatActivity {
                 btnIncreaseAdults == null || btnDecreaseAdults == null ||
                 btnIncreaseChildren == null || btnDecreaseChildren == null ||
                 btnSelectDate == null || txtCampsiteTotal == null || totalPriceTextView == null) {
-            Toast.makeText(this, "Error: Some price calculator views are not initialized", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Lỗi: Một số thành phần tính giá chưa được khởi tạo", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -160,7 +162,7 @@ public class CartActivity extends AppCompatActivity {
                     priceCalculator.setCampsite(selected);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(this, "Error updating price calculator", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Lỗi khi cập nhật bộ tính giá", Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
@@ -265,7 +267,7 @@ public class CartActivity extends AppCompatActivity {
                 priceCalculator.refreshPriceCalculation();
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Error refreshing price calculation", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Lỗi khi làm mới tính toán giá", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -293,64 +295,68 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void handlePayLater() {
+        Log.d(TAG, "handlePayLater() called");
+
         Campsite campsite = cartManager.getSelectedCampsite();
-        Map<Gear, Integer> gearMap = cartManager.getGearMap();
+        Map<Gear, Integer> originalGearMap = cartManager.getGearMap();
 
         if (campsite == null) {
+            Log.e(TAG, "Campsite is null");
             Toast.makeText(this, "Chưa chọn Campsite!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
-            // Lấy thông tin từ priceCalculator
             double totalAmount = priceCalculator.getGrandTotal();
             int adults = priceCalculator.getNumberOfAdults();
             int children = priceCalculator.getNumberOfChildren();
             int numberOfDays = priceCalculator.getNumberOfDays();
 
-            // Kiểm tra totalAmount
             if (totalAmount <= 0) {
+                Log.e(TAG, "Invalid total amount: " + totalAmount);
                 Toast.makeText(this, "Tổng tiền không hợp lệ!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Chuyển đổi Calendar thành Timestamp
             Calendar startCal = priceCalculator.getStartDate();
             Calendar endCal = priceCalculator.getEndDate();
             if (startCal == null || endCal == null) {
+                Log.e(TAG, "Start or end date is null");
                 Toast.makeText(this, "Ngày thuê không được thiết lập!", Toast.LENGTH_SHORT).show();
                 return;
             }
             Timestamp startDate = new Timestamp(startCal.getTimeInMillis());
             Timestamp endDate = new Timestamp(endCal.getTimeInMillis());
 
-            // Kiểm tra ngày hợp lệ
             long currentTime = System.currentTimeMillis();
             if (startDate.getTime() < currentTime) {
+                Log.e(TAG, "Start date is before current time");
                 Toast.makeText(this, "Ngày bắt đầu phải sau ngày hiện tại (" + new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(currentTime)) + ")!", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (endDate.getTime() <= startDate.getTime()) {
+                Log.e(TAG, "End date is before or equal to start date");
                 Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Log.d(TAG, "Start Date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(startDate));
-            Log.d(TAG, "End Date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(endDate));
-            Log.d(TAG, "Total Amount: " + totalAmount);
-            Log.d(TAG, "Gear Map Size: " + (gearMap != null ? gearMap.size() : 0));
-
-            // Lấy thông tin người dùng từ Firebase Authentication
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
+                Log.e(TAG, "User is not logged in");
                 Toast.makeText(this, "Vui lòng đăng nhập để đặt hàng!", Toast.LENGTH_SHORT).show();
                 return;
             }
             String bookerId = user.getUid();
             String bookerName = user.getDisplayName() != null ? user.getDisplayName() : "Unknown User";
 
-            // Tạo order với đầy đủ thông tin
-            OrderManager.getInstance().addOrder(
+            // Chuyển đổi Map<Gear, Integer> sang Map<String, Integer>
+            Map<String, Integer> gearMap = new HashMap<>();
+            for (Map.Entry<Gear, Integer> entry : originalGearMap.entrySet()) {
+                gearMap.put(entry.getKey().getGearId(), entry.getValue()); // Sử dụng getGearId()
+            }
+
+            Log.d(TAG, "Calling OrderManager.addOrder for booker: " + bookerId);
+            OrderManager.getInstance(this).addOrder(
                     campsite,
                     gearMap,
                     (int) totalAmount,
@@ -358,37 +364,232 @@ public class CartActivity extends AppCompatActivity {
                     bookerId,
                     startDate,
                     endDate,
-                    false, // approveStatus
-                    false, // paymentStatus
-                    adults + children, // quantity (tổng số người)
-                    campsite.getCampPrice(), // bookingPrice
+                    false,
+                    false,
+                    adults + children,
+                    campsite.getCampPrice(),
                     bookerName,
                     new OrderManager.OrderCallback() {
                         @Override
                         public void onSuccess() {
+                            Log.d(TAG, "Order added successfully");
                             String orderDetails = String.format(
                                     "Campsite: %s\nSố người lớn: %d\nSố trẻ em: %d\nSố ngày: %d\nTổng tiền: vnđ%.1f",
                                     campsite.getCampName(), adults, children, numberOfDays, totalAmount
                             );
-                            Toast.makeText(CartActivity.this, "Đã đặt hàng theo hình thức Paylater\n" + orderDetails, Toast.LENGTH_LONG).show();
-                            cartManager.clearCart(CartActivity.this);
-                            finish();
+                            if (!CartActivity.this.isFinishing()) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(CartActivity.this, "Đã đặt hàng theo hình thức Paylater\n" + orderDetails, Toast.LENGTH_LONG).show();
+                                    cartManager.clearCart(CartActivity.this);
+                                    finish();
+                                });
+                            } else {
+                                Log.w(TAG, "Activity is finishing, cannot show Toast");
+                            }
                         }
 
                         @Override
                         public void onFailure(String error) {
-                            Toast.makeText(CartActivity.this, "Lỗi khi đặt hàng: " + error, Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Order failed: " + error);
+                            if (!CartActivity.this.isFinishing()) {
+                                runOnUiThread(() -> Toast.makeText(CartActivity.this, "Lỗi khi đặt hàng: " + error, Toast.LENGTH_SHORT).show());
+                            }
                         }
                     }
             );
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "Payment error: " + e.getMessage());
-            Toast.makeText(this, "Lỗi khi xử lý thanh toán. Vui lòng thử lại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Payment error: " + e.getMessage(), e);
+            if (!CartActivity.this.isFinishing()) {
+                Toast.makeText(this, "Lỗi khi xử lý thanh toán: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void handlePayNow() {
-        Toast.makeText(this, "Chức năng Paynow đang được phát triển", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "handlePayNow() called");
+
+        Campsite campsite = cartManager.getSelectedCampsite();
+        if (campsite == null) {
+            Log.e(TAG, "Campsite is null");
+            Toast.makeText(this, "Chưa chọn Campsite!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            double totalAmount = priceCalculator.getGrandTotal();
+            if (totalAmount <= 0) {
+                Log.e(TAG, "Invalid total amount: " + totalAmount);
+                Toast.makeText(this, "Tổng tiền không hợp lệ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Tạo mã đơn hàng tạm thời (dùng timestamp)
+            String orderId = "ORDER" + System.currentTimeMillis();
+
+            // Lấy URL thanh toán VNPay
+            String paymentUrl = VNPay.getPaymentUrl(orderId, (long) totalAmount);
+            if (paymentUrl == null) {
+                Log.e(TAG, "Failed to generate payment URL");
+                Toast.makeText(this, "Lỗi: Không thể tạo URL thanh toán!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Log.d(TAG, "Payment URL generated: " + paymentUrl);
+
+            // Mở trình duyệt hoặc WebView để thanh toán
+            Intent intent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(paymentUrl));
+            startActivity(intent);
+
+            // Ghi lại orderId và totalAmount tạm để xử lý khi quay lại
+            getSharedPreferences("VNPay", MODE_PRIVATE)
+                    .edit()
+                    .putString("pendingOrderId", orderId)
+                    .putLong("pendingTotal", (long) totalAmount)
+                    .apply();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error in handlePayNow: " + e.getMessage(), e);
+            Toast.makeText(this, "Lỗi khi tạo URL thanh toán: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Cập nhật intent mới để xử lý
+
+        android.net.Uri data = intent.getData();
+        if (data != null && data.toString().startsWith("myapp://vnpay_return")) {
+            Log.d(TAG, "Received VNPay callback: " + data.toString());
+            String responseCode = data.getQueryParameter("vnp_ResponseCode");
+            Log.d(TAG, "VNPay response code: " + responseCode);
+            if ("00".equals(responseCode)) {
+                Log.d(TAG, "VNPay payment successful, calling saveOrderAfterPaynow");
+                saveOrderAfterPaynow(); // Thanh toán thành công
+            } else {
+                Log.e(TAG, "VNPay payment failed with response code: " + responseCode);
+                Toast.makeText(this, "Thanh toán thất bại hoặc bị huỷ, mã lỗi: " + responseCode, Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Log.w(TAG, "Invalid or null callback data: " + (data != null ? data.toString() : "null"));
+        }
+    }
+
+    private void saveOrderAfterPaynow() {
+        Log.d(TAG, "saveOrderAfterPaynow() called");
+
+        Campsite campsite = cartManager.getSelectedCampsite();
+        Map<Gear, Integer> originalGearMap = cartManager.getGearMap();
+
+        if (campsite == null) {
+            Log.e(TAG, "Campsite is null");
+            Toast.makeText(this, "Lỗi: Không có campsite được chọn!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            double totalAmount = priceCalculator.getGrandTotal();
+            int adults = priceCalculator.getNumberOfAdults();
+            int children = priceCalculator.getNumberOfChildren();
+            int numberOfDays = priceCalculator.getNumberOfDays();
+
+            if (totalAmount <= 0) {
+                Log.e(TAG, "Invalid total amount: " + totalAmount);
+                Toast.makeText(this, "Tổng tiền không hợp lệ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Calendar startCal = priceCalculator.getStartDate();
+            Calendar endCal = priceCalculator.getEndDate();
+            if (startCal == null || endCal == null) {
+                Log.e(TAG, "Start or end date is null");
+                Toast.makeText(this, "Ngày thuê không hợp lệ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Timestamp startDate = new Timestamp(startCal.getTimeInMillis());
+            Timestamp endDate = new Timestamp(endCal.getTimeInMillis());
+
+            long currentTime = System.currentTimeMillis();
+            if (startDate.getTime() < currentTime) {
+                Log.e(TAG, "Start date is before current time");
+                Toast.makeText(this, "Ngày bắt đầu phải sau ngày hiện tại (" + new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(currentTime)) + ")!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (endDate.getTime() <= startDate.getTime()) {
+                Log.e(TAG, "End date is before or equal to start date");
+                Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Log.e(TAG, "User is not logged in");
+                Toast.makeText(this, "Chưa đăng nhập!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String bookerId = user.getUid();
+            String bookerName = user.getDisplayName() != null ? user.getDisplayName() : "Unknown User";
+
+            // Chuyển đổi Map<Gear, Integer> sang Map<String, Integer>
+            Map<String, Integer> gearMap = new HashMap<>();
+            for (Map.Entry<Gear, Integer> entry : originalGearMap.entrySet()) {
+                if (entry.getKey() != null && entry.getKey().getGearId() != null) {
+                    gearMap.put(entry.getKey().getGearId(), entry.getValue());
+                } else {
+                    Log.w(TAG, "Skipping invalid gear entry: " + entry);
+                }
+            }
+
+            Log.d(TAG, "Calling OrderManager.addOrder for booker: " + bookerId + ", totalAmount: " + totalAmount + ", adults: " + adults + ", children: " + children);
+            OrderManager.getInstance(this).addOrder(
+                    campsite,
+                    gearMap,
+                    (int) totalAmount,
+                    "Đã thanh toán",
+                    bookerId,
+                    startDate,
+                    endDate,
+                    true,  // approve
+                    true,  // payment
+                    adults + children,
+                    campsite.getCampPrice(),
+                    bookerName,
+                    new OrderManager.OrderCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d(TAG, "Order added successfully to Firestore");
+                            String orderDetails = String.format(
+                                    "Campsite: %s\nSố người lớn: %d\nSố trẻ em: %d\nSố ngày: %d\nTổng tiền: vnđ%.1f",
+                                    campsite.getCampName(), adults, children, numberOfDays, totalAmount
+                            );
+                            if (!CartActivity.this.isFinishing()) {
+                                runOnUiThread(() -> {
+                                    Log.d(TAG, "Showing success Toast for VNPay payment");
+                                    Toast.makeText(CartActivity.this, "Đã thanh toán thành công bằng VNPay\n" + orderDetails, Toast.LENGTH_LONG).show();
+                                    cartManager.clearCart(CartActivity.this);
+                                    finish();
+                                });
+                            } else {
+                                Log.w(TAG, "Activity is finishing, cannot show Toast");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            Log.e(TAG, "Failed to add order to Firestore: " + error);
+                            if (!CartActivity.this.isFinishing()) {
+                                runOnUiThread(() -> Toast.makeText(CartActivity.this, "Lỗi khi lưu đơn hàng vào Firestore: " + error, Toast.LENGTH_LONG).show());
+                            }
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "Payment error in saveOrderAfterPaynow: " + e.getMessage(), e);
+            if (!CartActivity.this.isFinishing()) {
+                Toast.makeText(this, "Lỗi khi xử lý thanh toán: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

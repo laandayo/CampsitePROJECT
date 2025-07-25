@@ -24,23 +24,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:weightSum="5">
+            android:gravity="center_vertical"
+            android:paddingVertical="8dp">
 
-            <!-- Search View (4/5 width) -->
+            <!-- Search View -->
             <RelativeLayout
                 android:id="@+id/search_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="12dp"
                 android:background="@drawable/bg_search"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp">
+                android:paddingVertical="8dp">
 
                 <ImageView
                     android:id="@+id/ic_search"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
                     android:src="@android:drawable/ic_menu_search"
@@ -64,36 +65,35 @@
                     android:textSize="14sp" />
             </RelativeLayout>
 
-            <!-- Nút bên phải (1/5 width) -->
+            <!-- Action Buttons Container -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingHorizontal="4dp">
+                android:orientation="horizontal">
 
+                <!-- Cart Button with Badge -->
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp">
+                    android:layout_marginEnd="8dp">
 
                     <ImageButton
                         android:id="@+id/btn_cart"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="8dp"
+                        android:padding="10dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_cart"/>
 
                     <TextView
                         android:id="@+id/cart_badge"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:layout_gravity="top|end"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
                         android:background="@android:color/holo_red_dark"
                         android:gravity="center"
                         android:text="3"
@@ -102,19 +102,20 @@
                         android:visibility="visible" />
                 </FrameLayout>
 
+                <!-- Filter Button -->
                 <ImageButton
                     android:id="@+id/btn_filter"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
+                    android:padding="10dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_filter"
-                    />
+                    android:src="@drawable/ic_filter" />
             </LinearLayout>
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Main Content Area -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -125,45 +126,94 @@
             android:id="@+id/recyclerViewCampsite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false" />
+            android:padding="12dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical" />
 
-        <!-- Thông báo không có kết quả -->
-        <TextView
+        <!-- No Results Message -->
+        <LinearLayout
             android:id="@+id/txt_no_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Không tìm thấy campsite phù hợp\nVui lòng thử lại với điều kiện khác"
-            android:textSize="16sp"
-            android:textColor="@android:color/darker_gray"
+            android:orientation="vertical"
             android:gravity="center"
             android:padding="32dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@android:drawable/ic_menu_search"
+                android:tint="@android:color/darker_gray"
+                android:alpha="0.6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Không tìm thấy campsite phù hợp"
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Vui lòng thử lại với điều kiện khác"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Refresh Button (positioned at bottom of content area) -->
+        <Button
+            android:id="@+id/btn_refresh_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:text="Làm mới"
             android:visibility="gone"
-            android:drawableTop="@android:drawable/ic_menu_search"
-            android:drawablePadding="16dp" />
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp" />
 
+        <!-- Floating Action Buttons Container -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="24dp"
+            android:orientation="vertical"
+            android:gravity="end">
 
+            <!-- AI Chat Button -->
+            <Button
+                android:id="@+id/aiChat"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/round_button_bg"
+                android:text="AI"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:elevation="6dp" />
 
+            <!-- Multi Action Button -->
+            <Button
+                android:id="@+id/multiActionButton"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/round_button_bg"
+                android:text="≡"
+                android:textSize="24sp"
+                android:textColor="@android:color/white"
+                android:elevation="8dp" />
+        </LinearLayout>
     </RelativeLayout>
-    <Button
-        android:id="@+id/btn_refresh_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Làm mới"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone"
-        android:layout_marginTop="8dp" />
-
-    <!-- Multi Action Button -->
-    <Button
-        android:id="@+id/multiActionButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="24dp"
-        android:background="@drawable/round_button_bg"
-        android:text="≡"
-        android:textSize="24sp"
-        android:textColor="@android:color/white" />
 </LinearLayout>

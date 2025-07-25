@@ -2,6 +2,7 @@ package com.lan.campsiteproject.controller.orders;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,9 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.adapter.GearInOrderAdapter;
 import com.lan.campsiteproject.adapter.OrderHistoryAdapter;
+import com.lan.campsiteproject.model.Gear;
 import com.lan.campsiteproject.model.Order;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +35,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     private ImageView imgCamp;
     private RecyclerView recyclerGear;
     private Button btnEdit, btnCancel;
+    private FirebaseFirestore db;
+    private static final String TAG = "OrderDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         recyclerGear = findViewById(R.id.recyclerGearInOrder);
         btnEdit = findViewById(R.id.btnEditOrder);
         btnCancel = findViewById(R.id.btnCancelOrder);
+        db = FirebaseFirestore.getInstance();
 
         order = (Order) getIntent().getSerializableExtra("order");
         if (order == null) {
@@ -91,12 +97,46 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         // Set up gear list
         List<OrderHistoryAdapter.GearEntry> gearEntries = new ArrayList<>();
-        for (Map.Entry<com.lan.campsiteproject.model.Gear, Integer> entry : order.getGearMap().entrySet()) {
-            gearEntries.add(new OrderHistoryAdapter.GearEntry(entry.getKey(), entry.getValue()));
+        Map<String, Integer> gearMap = order.getGearMap();
+        int totalGears = gearMap.size();
+        int[] fetchCount = {0}; // Counter for async calls
+
+        if (gearMap.isEmpty()) {
+            // If no gears, set adapter immediately
+            GearInOrderAdapter gearAdapter = new GearInOrderAdapter(this, gearEntries);
+            recyclerGear.setLayoutManager(new LinearLayoutManager(this));
+            recyclerGear.setAdapter(gearAdapter);
+        } else {
+            for (Map.Entry<String, Integer> entry : gearMap.entrySet()) {
+                String gearId = entry.getKey();
+                int quantity = entry.getValue();
+
+                db.collection("gear").document(gearId).get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            Gear gear = documentSnapshot.toObject(Gear.class);
+                            if (gear != null) {
+                                gearEntries.add(new OrderHistoryAdapter.GearEntry(gear, quantity));
+                            }
+                            fetchCount[0]++;
+                            if (fetchCount[0] == totalGears) {
+                                // All gears fetched, set adapter
+                                GearInOrderAdapter gearAdapter = new GearInOrderAdapter(this, gearEntries);
+                                recyclerGear.setLayoutManager(new LinearLayoutManager(this));
+                                recyclerGear.setAdapter(gearAdapter);
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Failed to fetch gear: " + gearId + ", error: " + e.getMessage());
+                            fetchCount[0]++;
+                            if (fetchCount[0] == totalGears) {
+                                // Even if some fetches fail, set adapter with available data
+                                GearInOrderAdapter gearAdapter = new GearInOrderAdapter(this, gearEntries);
+                                recyclerGear.setLayoutManager(new LinearLayoutManager(this));
+                                recyclerGear.setAdapter(gearAdapter);
+                            }
+                        });
+            }
         }
-        GearInOrderAdapter gearAdapter = new GearInOrderAdapter(this, gearEntries);
-        recyclerGear.setLayoutManager(new LinearLayoutManager(this));
-        recyclerGear.setAdapter(gearAdapter);
 
         // Handle edit and cancel buttons based on order status
         long currentTime = System.currentTimeMillis();
@@ -119,7 +159,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     private void cancelOrder() {
-        OrderManager.getInstance().cancelOrder(order.getOrderId(), new OrderManager.OrderCallback() {
+        OrderManager.getInstance(this).cancelOrder(order.getOrderId(), new OrderManager.OrderCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(OrderDetailActivity.this, "Order cancelled", Toast.LENGTH_SHORT).show();

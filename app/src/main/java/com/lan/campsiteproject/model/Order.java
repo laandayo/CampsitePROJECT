@@ -1,65 +1,34 @@
 package com.lan.campsiteproject.model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
+import com.google.firebase.firestore.PropertyName;
+import com.lan.campsiteproject.util.DateToTimestampConverter;
 import java.sql.Timestamp;
 import java.util.Map;
-import java.util.Objects;
 
-public class Order implements Serializable {
-    @SerializedName("orderId")
-    @Expose
+public class Order {
     private String orderId;
-    @SerializedName("timeStamp")
-    @Expose
-    private Timestamp timeStamp;
-    @SerializedName("booker")
-    @Expose
+    private Timestamp createdDate;
     private String booker;
-    @SerializedName("campsite")
-    @Expose
     private Campsite campsite;
-    @SerializedName("gearMap")
-    @Expose
-    private Map<Gear, Integer> gearMap;
-    @SerializedName("startDate")
-    @Expose
+    private Map<String, Integer> gearMap;
     private Timestamp startDate;
-    @SerializedName("endDate")
-    @Expose
     private Timestamp endDate;
-    @SerializedName("approveStatus")
-    @Expose
     private boolean approveStatus;
-    @SerializedName("paymentStatus")
-    @Expose
     private boolean paymentStatus;
-    @SerializedName("quantity")
-    @Expose
     private int quantity;
-    @SerializedName("totalAmount")
-    @Expose
     private int totalAmount;
-    @SerializedName("bookingPrice")
-    @Expose
     private int bookingPrice;
-    @SerializedName("bookerName")
-    @Expose
     private String bookerName;
-    @SerializedName("status")
-    @Expose
     private String status;
 
-    public Order() {
-    }
+    public Order() {}
 
-    public Order(String orderId, Timestamp timeStamp, String booker, Campsite campsite, Map<Gear, Integer> gearMap,
-                 Timestamp startDate, Timestamp endDate, boolean approveStatus, boolean paymentStatus,
-                 int quantity, int totalAmount, int bookingPrice, String bookerName, String status) {
+    public Order(String orderId, Timestamp createdDate, String booker, Campsite campsite,
+                 Map<String, Integer> gearMap, Timestamp startDate, Timestamp endDate,
+                 boolean approveStatus, boolean paymentStatus, int quantity, int totalAmount,
+                 int bookingPrice, String bookerName, String status) {
         this.orderId = orderId;
-        this.timeStamp = timeStamp;
+        this.createdDate = createdDate;
         this.booker = booker;
         this.campsite = campsite;
         this.gearMap = gearMap;
@@ -74,128 +43,80 @@ public class Order implements Serializable {
         this.status = status;
     }
 
-    public String getOrderId() {
-        return orderId;
+    // Getters và setters khác giữ nguyên...
+    @PropertyName("orderId")
+    public String getOrderId() { return orderId; }
+    @PropertyName("orderId")
+    public void setOrderId(String orderId) { this.orderId = orderId; }
+
+    @PropertyName("createdDate")
+    public Timestamp getCreatedDate() { return createdDate; }
+    @PropertyName("createdDate")
+    public void setCreatedDate(Object createdDate) {
+        this.createdDate = DateToTimestampConverter.dateToTimestamp(createdDate);
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    @PropertyName("booker")
+    public String getBooker() { return booker; }
+    @PropertyName("booker")
+    public void setBooker(String booker) { this.booker = booker; }
+
+    @PropertyName("campsite")
+    public Campsite getCampsite() { return campsite; }
+    @PropertyName("campsite")
+    public void setCampsite(Campsite campsite) { this.campsite = campsite; }
+
+    @PropertyName("gearMap")
+    public Map<String, Integer> getGearMap() { return gearMap; }
+    @PropertyName("gearMap")
+    public void setGearMap(Map<String, Integer> gearMap) { this.gearMap = gearMap; }
+
+    @PropertyName("startDate")
+    public Timestamp getStartDate() { return startDate; }
+    @PropertyName("startDate")
+    public void setStartDate(Object startDate) {
+        this.startDate = DateToTimestampConverter.dateToTimestamp(startDate);
     }
 
-    public Timestamp getTimeStamp() {
-        return timeStamp;
+    @PropertyName("endDate")
+    public Timestamp getEndDate() { return endDate; }
+    @PropertyName("endDate")
+    public void setEndDate(Object endDate) {
+        this.endDate = DateToTimestampConverter.dateToTimestamp(endDate);
     }
 
-    public void setTimeStamp(Timestamp timeStamp) {
-        this.timeStamp = timeStamp;
-    }
+    @PropertyName("approveStatus")
+    public boolean isApproveStatus() { return approveStatus; }
+    @PropertyName("approveStatus")
+    public void setApproveStatus(boolean approveStatus) { this.approveStatus = approveStatus; }
 
-    public String getBooker() {
-        return booker;
-    }
+    @PropertyName("paymentStatus")
+    public boolean isPaymentStatus() { return paymentStatus; }
+    @PropertyName("paymentStatus")
+    public void setPaymentStatus(boolean paymentStatus) { this.paymentStatus = paymentStatus; }
 
-    public void setBooker(String booker) {
-        this.booker = booker;
-    }
+    @PropertyName("quantity")
+    public int getQuantity() { return quantity; }
+    @PropertyName("quantity")
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    public Campsite getCampsite() {
-        return campsite;
-    }
+    @PropertyName("totalAmount")
+    public int getTotalAmount() { return totalAmount; }
+    @PropertyName("totalAmount")
+    public void setTotalAmount(int totalAmount) { this.totalAmount = totalAmount; }
 
-    public void setCampsite(Campsite campsite) {
-        this.campsite = campsite;
-    }
+    @PropertyName("bookingPrice")
+    public int getBookingPrice() { return bookingPrice; }
+    @PropertyName("bookingPrice")
+    public void setBookingPrice(int bookingPrice) { this.bookingPrice = bookingPrice; }
 
-    public Map<Gear, Integer> getGearMap() {
-        return gearMap;
-    }
+    @PropertyName("bookerName")
+    public String getBookerName() { return bookerName; }
+    @PropertyName("bookerName")
+    public void setBookerName(String bookerName) { this.bookerName = bookerName; }
 
-    public void setGearMap(Map<Gear, Integer> gearMap) {
-        this.gearMap = gearMap;
-    }
-
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
-
-    public Timestamp getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Timestamp endDate) {
-        this.endDate = endDate;
-    }
-
-    public boolean isApproveStatus() {
-        return approveStatus;
-    }
-
-    public void setApproveStatus(boolean approveStatus) {
-        this.approveStatus = approveStatus;
-    }
-
-    public boolean isPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(boolean paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public int getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(int totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public int getBookingPrice() {
-        return bookingPrice;
-    }
-
-    public void setBookingPrice(int bookingPrice) {
-        this.bookingPrice = bookingPrice;
-    }
-
-    public String getBookerName() {
-        return bookerName;
-    }
-
-    public void setBookerName(String bookerName) {
-        this.bookerName = bookerName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return orderId != null && orderId.equals(order.orderId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderId);
-    }
+    @PropertyName("status")
+    public String getStatus() { return status; }
+    @PropertyName("status")
+    public void setStatus(String status) { this.status = status; }
 }

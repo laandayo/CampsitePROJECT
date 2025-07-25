@@ -12,6 +12,7 @@ import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.adapter.OrderHistoryAdapter;
 import com.lan.campsiteproject.model.Order;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class OrderHistoryActivity extends AppCompatActivity {
@@ -29,13 +30,14 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
         // Assume bookerId is passed via Intent or retrieved from authentication
         String bookerId = getIntent().getStringExtra("bookerId");
+        Toast.makeText(this, "BookerId: " + bookerId, Toast.LENGTH_LONG).show();
         if (bookerId == null) {
             Toast.makeText(this, "Invalid user", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        OrderManager.getInstance().fetchOrders(bookerId, new OrderManager.OrderListCallback() {
+        OrderManager.getInstance(this).fetchOrders(bookerId, new OrderManager.OrderListCallback() {
             @Override
             public void onSuccess(List<Order> orders) {
                 if (orders.isEmpty()) {
@@ -43,7 +45,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
                 }
                 adapter = new OrderHistoryAdapter(OrderHistoryActivity.this, orders, order -> {
                     Intent intent = new Intent(OrderHistoryActivity.this, OrderDetailActivity.class);
-                    intent.putExtra("order", order);
+                    intent.putExtra("order", (Serializable) order); // Ép kiểu rõ ràng sang Serializable
                     startActivity(intent);
                 });
                 recyclerView.setAdapter(adapter);

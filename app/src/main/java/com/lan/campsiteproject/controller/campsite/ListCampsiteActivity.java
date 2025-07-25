@@ -29,11 +29,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lan.campsiteproject.R;
 import com.lan.campsiteproject.adapter.CampsiteAdapter;
+import com.lan.campsiteproject.aichat.AiChatActivity;
 import com.lan.campsiteproject.controller.SettingsActivity;
 import com.lan.campsiteproject.controller.orders.OrderHistoryActivity;
 import com.lan.campsiteproject.controller.user.ChatListActivity;
@@ -112,6 +114,12 @@ public class ListCampsiteActivity extends AppCompatActivity {
         // Setup cart button
         btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
 
+        Button aiChatButton = findViewById(R.id.aiChat);
+        aiChatButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, AiChatActivity.class);
+            startActivity(intent);
+        });
+
         // Setup filter button
         btnFilter.setOnClickListener(v -> showFilterBottomSheet());
 
@@ -175,7 +183,14 @@ public class ListCampsiteActivity extends AppCompatActivity {
             });
 
             popupView.findViewById(R.id.btnOrder).setOnClickListener(btn -> {
-                startActivity(new Intent(this, OrderHistoryActivity.class));
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    Intent intent = new Intent(this, OrderHistoryActivity.class);
+                    intent.putExtra("bookerId", user.getUid());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Bạn cần đăng nhập để xem lịch sử đơn hàng", Toast.LENGTH_SHORT).show();
+                }
                 popupWindow.dismiss();
             });
 
@@ -535,5 +550,6 @@ public class ListCampsiteActivity extends AppCompatActivity {
             }
         }
     }
+
 
 }
