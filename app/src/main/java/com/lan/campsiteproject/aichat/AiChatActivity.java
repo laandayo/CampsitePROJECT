@@ -35,7 +35,7 @@ public class AiChatActivity extends AppCompatActivity {
     private ChatAdapter chatAdapter;
     private List<ChatMessage> chatList;
 
-    private static final String OPENAI_API_KEY = "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";
+    private static final String OPENAI_API_KEY = "123";
     private static final String ENDPOINT = "https://api.openai.com/v1/chat/completions";
     private final OkHttpClient client = new OkHttpClient();
 
